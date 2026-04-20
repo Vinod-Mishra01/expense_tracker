@@ -78,7 +78,15 @@ function AuthProvider({ children }: AuthProviderProps) {
         try {
             const resp = await apiSignIn(values)
             if (resp) {
-                handleSignIn({ accessToken: resp.token }, resp.user)
+                // handleSignIn({ accessToken: resp.token }, resp.user)
+
+                handleSignIn(
+  { accessToken: resp.token },
+  {
+    ...resp.user,
+    userName: resp.user.userName || resp.user.name
+  }
+)
                 redirect()
                 return {
                     status: 'success',
@@ -98,29 +106,49 @@ function AuthProvider({ children }: AuthProviderProps) {
         }
     }
 
-    const signUp = async (values: SignUpCredential): AuthResult => {
-        try {
-            const resp = await apiSignUp(values)
-            if (resp) {
-                handleSignIn({ accessToken: resp.token }, resp.user)
-                redirect()
-                return {
-                    status: 'success',
-                    message: '',
-                }
-            }
-            return {
-                status: 'failed',
-                message: 'Unable to sign up',
-            }
-            // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-        } catch (errors: any) {
-            return {
-                status: 'failed',
-                message: errors?.response?.data?.message || errors.toString(),
-            }
+    // const signUp = async (values: SignUpCredential): AuthResult => {
+    //     try {
+    //         const resp = await apiSignUp(values)
+    //         if (resp) {
+    //             handleSignIn({ accessToken: resp.token }, resp.user)
+    //             redirect()
+    //             return {
+    //                 status: 'success',
+    //                 message: '',
+    //             }
+    //         }
+    //         return {
+    //             status: 'failed',
+    //             message: 'Unable to sign up',
+    //         }
+    //         // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+    //     } catch (errors: any) {
+    //         return {
+    //             status: 'failed',
+    //             message: errors?.response?.data?.message || errors.toString(),
+    //         }
+    //     }
+    // }
+
+const signUp = async (values: SignUpCredential): AuthResult => {
+    try {
+        await apiSignUp(values)
+
+        navigatorRef.current?.navigate('/sign-in')
+
+        return {
+            status: 'success',
+            message: 'Registration successful',
+        }
+    } catch (errors: any) {
+        return {
+            status: 'failed',
+            message: errors?.response?.data?.message || errors.toString(),
         }
     }
+}
+
+
 
     const signOut = async () => {
         try {

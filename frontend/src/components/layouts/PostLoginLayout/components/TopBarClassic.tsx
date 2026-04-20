@@ -7,6 +7,12 @@ import LayoutBase from '@/components//template/LayoutBase'
 import useResponsive from '@/utils/hooks/useResponsive'
 import { LAYOUT_TOP_BAR_CLASSIC } from '@/constants/theme.constant'
 import type { CommonProps } from '@/@types/common'
+import SidePanel from '@/components/template/SidePanel'
+import Search from '@/components/template/Search'
+import LanguageSelector from '@/components/template/LanguageSelector'
+import Notification from '@/components/template/Notification'
+
+
 
 const TopBarClassic = ({ children }: CommonProps) => {
     const { larger, smaller } = useResponsive()
@@ -28,11 +34,12 @@ const TopBarClassic = ({ children }: CommonProps) => {
                             </>
                         }
                         headerMiddle={<>{larger.lg && <HorizontalNav />}</>}
-                        headerEnd={
-                            <>
-                                <UserProfileDropdown hoverable={false} />
-                            </>
-                        }
+                      headerEnd={
+    <>
+        <SidePanel />
+        <UserProfileDropdown hoverable={false} />
+    </>
+}
                     />
                     {children}
                 </div>

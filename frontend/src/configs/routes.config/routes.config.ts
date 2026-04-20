@@ -12,46 +12,33 @@ export const protectedRoutes: Routes = [
         component: lazy(() => import('@/views/Home')),
         authority: [],
     },
-    /** Example purpose only, please remove */
+
     {
-        key: 'singleMenuItem',
-        path: '/single-menu-view',
-        component: lazy(() => import('@/views/demo/SingleMenuView')),
+        key: 'manageExpense.addExpense',
+        path: '/add-expense',
+        component: lazy(() => import('@/views/AddExpense')),
         authority: [],
     },
     {
-        key: 'collapseMenu.item1',
-        path: '/collapse-menu-item-view-1',
-        component: lazy(() => import('@/views/demo/CollapseMenuItemView1')),
+        key: 'manageExpense.viewExpense',
+        path: '/view-expenses',
+        component: lazy(() => import('@/views/ViewExpenses')),
         authority: [],
     },
+
     {
-        key: 'collapseMenu.item2',
-        path: '/collapse-menu-item-view-2',
-        component: lazy(() => import('@/views/demo/CollapseMenuItemView2')),
+        key: 'addSaving',
+        path: '/add-saving',
+        component: lazy(() => import('@/views/AddSaving')),
         authority: [],
     },
+
     {
-        key: 'groupMenu.single',
-        path: '/group-single-menu-item-view',
-        component: lazy(() => import('@/views/demo/GroupSingleMenuItemView')),
+        key: 'borrowLend',
+        path: '/borrow-lend',
+        component: lazy(() => import('@/views/BorrowLend')),
         authority: [],
     },
-    {
-        key: 'groupMenu.collapse.item1',
-        path: '/group-collapse-menu-item-view-1',
-        component: lazy(
-            () => import('@/views/demo/GroupCollapseMenuItemView1'),
-        ),
-        authority: [],
-    },
-    {
-        key: 'groupMenu.collapse.item2',
-        path: '/group-collapse-menu-item-view-2',
-        component: lazy(
-            () => import('@/views/demo/GroupCollapseMenuItemView2'),
-        ),
-        authority: [],
-    },
+
     ...othersRoute,
 ]

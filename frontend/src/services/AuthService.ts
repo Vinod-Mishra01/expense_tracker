@@ -17,13 +17,30 @@ export async function apiSignIn(data: SignInCredential) {
     })
 }
 
+// export async function apiSignUp(data: SignUpCredential) {
+//     return ApiService.fetchDataWithAxios<SignUpResponse>({
+//         url: endpointConfig.signUp,
+//         method: 'post',
+//         data,
+//     })
+// }
+
+
+
 export async function apiSignUp(data: SignUpCredential) {
+    const payload = {
+        name: data.userName,
+        email: data.email,
+        password: data.password,
+    }
+
     return ApiService.fetchDataWithAxios<SignUpResponse>({
         url: endpointConfig.signUp,
         method: 'post',
-        data,
+        data: payload,
     })
 }
+
 
 export async function apiSignOut() {
     return ApiService.fetchDataWithAxios({
