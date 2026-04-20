@@ -1,3 +1,5 @@
+// routes.config.ts
+
 import { lazy } from 'react'
 import authRoute from './authRoute'
 import othersRoute from './othersRoute'
@@ -13,30 +15,45 @@ export const protectedRoutes: Routes = [
         authority: [],
     },
 
+    // Expenses
     {
-        key: 'manageExpense.addExpense',
+        key: 'expense.add',
         path: '/add-expense',
         component: lazy(() => import('@/views/AddExpense')),
         authority: [],
     },
     {
-        key: 'manageExpense.viewExpense',
+        key: 'expense.view',
         path: '/view-expenses',
         component: lazy(() => import('@/views/ViewExpenses')),
         authority: [],
     },
 
+    // Savings
     {
-        key: 'addSaving',
+        key: 'saving.add',
         path: '/add-saving',
         component: lazy(() => import('@/views/AddSaving')),
         authority: [],
     },
-
     {
-        key: 'borrowLend',
+        key: 'saving.view',
+        path: '/view-savings',
+        component: lazy(() => import('@/views/ViewSavings')),
+        authority: [],
+    },
+
+    // Borrow & Lend
+    {
+        key: 'borrow.add',
         path: '/borrow-lend',
         component: lazy(() => import('@/views/BorrowLend')),
+        authority: [],
+    },
+    {
+        key: 'borrow.view',
+        path: '/view-borrow-lend',
+        component: lazy(() => import('@/views/ViewBorrowLend')),
         authority: [],
     },
 
