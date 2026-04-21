@@ -37,6 +37,10 @@ const Home = () => {
     const [loading, setLoading] =
         useState(false)
 
+const [salaryData, setSalaryData] =
+    useState<any[]>([])
+
+
     const [period, setPeriod] =
         useState('month')
 
@@ -64,6 +68,7 @@ const Home = () => {
                 expRes,
                 savRes,
                 borRes,
+                salaryRes,
             ] = await Promise.all([
                 axios.get(
                     'http://localhost:5000/api/expense/list',
@@ -77,7 +82,19 @@ const Home = () => {
                     'http://localhost:5000/api/borrow-lend/list',
                     { headers },
                 ),
+                axios.get(
+        'http://localhost:5000/api/salary/list',
+        {
+            headers,
+        },)
+                
             ])
+
+   
+
+setSalaryData(
+    salaryRes.data,
+)
 
             setExpenses(
                 expRes.data || [],
@@ -154,7 +171,7 @@ const Home = () => {
         makeChart(
             savings,
             'amount',
-        )
+        ) as { categories: string[]; values: number[] }
 
     const borrowChart =
         makeChart(
@@ -193,9 +210,30 @@ const Home = () => {
             0,
         )
 
-    const availableBalance =
-        totalSaving -
-        totalExpense
+// REPLACE OLD availableBalance LOGIC WITH THIS
+
+const totalSalary =
+    salaryData.reduce(
+        (
+            sum,
+            item,
+        ) =>
+            sum +
+            Number(
+                item.netSalary ||
+                    0,
+            ) +
+            Number(
+                item.extraIncome ||
+                    0,
+            ),
+        0,
+    )
+
+const availableBalance =
+    totalSalary -
+    totalExpense -
+    pendingBorrow
 
     let graphTitle =
         'Expense'
@@ -427,44 +465,104 @@ const Home = () => {
 
                                 </div>
 
-                                {/* GRAPH */}
-                                <div className="mt-5">
-                                    <Chart
-                                        type="area"
-                                        height="420px"
-                                        series={[
-                                            {
-                                                name: graphTitle,
-                                                data: graphData.values,
-                                            },
-                                        ]}
-                                        xAxis={
-                                            graphData.categories
-                                        }
-                                        customOptions={{
-                                            dataLabels: {
-                                                enabled: false,
-                                            },
-                                            stroke: {
-                                                curve: 'smooth',
-                                                width: 3,
-                                            },
-                                            fill: {
-                                                type: 'gradient',
-                                                gradient: {
-                                                    shadeIntensity: 1,
-                                                    opacityFrom: 0.4,
-                                                    opacityTo: 0.05,
-                                                    stops: [
-                                                        0,
-                                                        90,
-                                                        100,
-                                                    ],
+
+{/* GRAPH */}
+<div className="mt-5">
+    <Chart
+        type="line"
+        height="420px"
+        series={[
+            {
+                name: 'Expense',
+                data:
+                    expenseChart.values,
+            },
+            {
+                name: 'Saving',
+                data:
+                    savingChart.values as number[],
+            },
+            {
+                name: 'Salary',
+                data:
+                    expenseChart.categories.map(
+                        (
+                            month,
+                        ) => {
+                            const salaryForMonth =
+                                salaryData.find(
+                                    (
+                                        item,
+                                    ) => {
+                                        const d =
+                                            new Date(
+                                                item.date,
+                                            )
+                                        const key =
+                                            d.toLocaleString(
+                                                'default',
+                                                {
+                                                    month: 'short',
                                                 },
-                                            },
-                                        }}
-                                    />
-                                </div>
+                                            )
+                                        return (
+                                            key ===
+                                            month
+                                        )
+                                    },
+                                )
+                            return Number(
+                                salaryForMonth
+                                    ?.netSalary ||
+                                    0,
+                            ) +
+                            Number(
+                                salaryForMonth
+                                    ?.extraIncome ||
+                                    0,
+                            )
+                        },
+                    ),
+            },
+            {
+                name: 'Borrow',
+                data:
+                    borrowChart.values,
+            },
+        ] as { name: string; data: number[] }[]}
+        xAxis={
+            expenseChart.categories
+        }
+        customOptions={{
+            dataLabels: {
+                enabled: false,
+            },
+
+            stroke: {
+                curve: 'smooth',
+                width: 3,
+            },
+
+            markers: {
+                size: 5,
+            },
+
+            tooltip: {
+                shared: true,
+                intersect: false,
+            },
+
+            legend: {
+                show: true,
+                position: 'top',
+            },
+
+            fill: {
+                opacity: 0.15,
+            },
+        }}
+    />
+</div>
                             </Card>
                         </div>
 
@@ -496,6 +594,21 @@ const Home = () => {
                                     Current financial health
                                 </p>
                             </Card>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <Card>
     <div className="flex justify-between items-center mb-3">
         <h4>

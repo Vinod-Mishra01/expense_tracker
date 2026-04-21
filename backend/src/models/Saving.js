@@ -26,11 +26,17 @@ const savingSchema = new mongoose.Schema(
         required: true,
     },
 
-    type: {
-        type: String,
-        enum: ['Bank', 'Cash', 'FD', 'Other'],
-        required: true,
-    },
+type: {
+    type: String,
+    enum: [
+        'Bank',
+        'Cash',
+        'Investment',
+        'FD',
+        'Other',
+    ],
+    required: true,
+},
 
     note: {
         type: String,

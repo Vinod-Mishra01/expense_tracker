@@ -49,6 +49,20 @@ exports.getExpenses = async (req, res) => {
     }
 }
 
+exports.updateExpense = async (req, res) => {
+    try {
+        const updated = await Expense.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true }
+        )
+
+        res.json(updated)
+    } catch (error) {
+        res.status(500).json({ message: error.message })
+    }
+}
+
 // DELETE
 exports.deleteExpense = async (req, res) => {
     try {

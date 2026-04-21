@@ -27,6 +27,7 @@ const typeOptions = [
     { label: 'All', value: '' },
     { label: 'Bank', value: 'Bank' },
     { label: 'Cash', value: 'Cash' },
+        { label: 'Investment', value: 'Investment' },
     { label: 'FD', value: 'FD' },
     { label: 'Other', value: 'Other' },
 ]
@@ -635,145 +636,180 @@ const ViewSavings = () => {
                 </div>
             </Drawer>
 
-            <Drawer
-                title="Edit Saving"
-                isOpen={
-                    editOpen
+     <Drawer
+    title="Edit Saving"
+    isOpen={
+        editOpen
+    }
+    onClose={() =>
+        setEditOpen(
+            false,
+        )
+    }
+    onRequestClose={() =>
+        setEditOpen(
+            false,
+        )
+    }
+>
+    <div className="flex flex-col gap-4">
+
+        {/* Title */}
+        <div>
+            <label className="text-sm font-medium mb-2 block">
+                Saving Title
+            </label>
+
+            <Input
+                placeholder="Title"
+                value={
+                    editData.title
                 }
-                onClose={() =>
-                    setEditOpen(
-                        false,
+                onChange={(
+                    e,
+                ) =>
+                    setEditData(
+                        {
+                            ...editData,
+                            title:
+                                e
+                                    .target
+                                    .value,
+                        },
                     )
                 }
-                onRequestClose={() =>
-                    setEditOpen(
-                        false,
+            />
+        </div>
+
+        {/* Amount */}
+        <div>
+            <label className="text-sm font-medium mb-2 block">
+                Amount
+            </label>
+
+            <Input
+                type="number"
+                placeholder="Amount"
+                value={
+                    editData.amount
+                }
+                onChange={(
+                    e,
+                ) =>
+                    setEditData(
+                        {
+                            ...editData,
+                            amount:
+                                e
+                                    .target
+                                    .value,
+                        },
                     )
                 }
-            >
-                <div className="flex flex-col gap-4">
-                    <Input
-                        placeholder="Title"
-                        value={
-                            editData.title
-                        }
-                        onChange={(
-                            e,
-                        ) =>
-                            setEditData(
-                                {
-                                    ...editData,
-                                    title:
-                                        e
-                                            .target
-                                            .value,
-                                },
-                            )
-                        }
-                    />
+            />
+        </div>
 
-                    <Input
-                        type="number"
-                        placeholder="Amount"
-                        value={
-                            editData.amount
-                        }
-                        onChange={(
-                            e,
-                        ) =>
-                            setEditData(
-                                {
-                                    ...editData,
-                                    amount:
-                                        e
-                                            .target
-                                            .value,
-                                },
-                            )
-                        }
-                    />
+        {/* Type */}
+        <div>
+            <label className="text-sm font-medium mb-2 block">
+                Saving Type
+            </label>
 
-                    <Select
-                        options={
-                            typeOptions.filter(
-                                (
-                                    x,
-                                ) =>
-                                    x.value !==
-                                    '',
-                            )
-                        }
-                        value={typeOptions.find(
-                            (
-                                x,
-                            ) =>
-                                x.value ===
-                                editData.type,
-                        )}
-                        onChange={(
-                            val: any,
-                        ) =>
-                            setEditData(
-                                {
-                                    ...editData,
-                                    type:
-                                        val?.value,
-                                },
-                            )
-                        }
-                    />
+            <Select
+                options={typeOptions.filter(
+                    (
+                        x,
+                    ) =>
+                        x.value !==
+                        '',
+                )}
+                value={typeOptions.find(
+                    (
+                        x,
+                    ) =>
+                        x.value ===
+                        editData.type,
+                )}
+                onChange={(
+                    val: any,
+                ) =>
+                    setEditData(
+                        {
+                            ...editData,
+                            type:
+                                val?.value,
+                        },
+                    )
+                }
+            />
+        </div>
 
-                    <Input
-                        type="date"
-                        value={
-                            editData.date
-                        }
-                        onChange={(
-                            e,
-                        ) =>
-                            setEditData(
-                                {
-                                    ...editData,
-                                    date:
-                                        e
-                                            .target
-                                            .value,
-                                },
-                            )
-                        }
-                    />
+        {/* Date */}
+        <div>
+            <label className="text-sm font-medium mb-2 block">
+                Date
+            </label>
 
-                    <Input
-                        placeholder="Note"
-                        value={
-                            editData.note
-                        }
-                        onChange={(
-                            e,
-                        ) =>
-                            setEditData(
-                                {
-                                    ...editData,
-                                    note:
-                                        e
-                                            .target
-                                            .value,
-                                },
-                            )
-                        }
-                    />
+            <Input
+                type="date"
+                value={
+                    editData.date
+                }
+                onChange={(
+                    e,
+                ) =>
+                    setEditData(
+                        {
+                            ...editData,
+                            date:
+                                e
+                                    .target
+                                    .value,
+                        },
+                    )
+                }
+            />
+        </div>
 
-                    <Button
-                        variant="solid"
-                        onClick={
-                            handleUpdate
-                        }
-                    >
-                        Update
-                        Saving
-                    </Button>
-                </div>
-            </Drawer>
+        {/* Note */}
+        <div>
+            <label className="text-sm font-medium mb-2 block">
+                Note
+            </label>
+
+            <Input
+                placeholder="Note"
+                value={
+                    editData.note
+                }
+                onChange={(
+                    e,
+                ) =>
+                    setEditData(
+                        {
+                            ...editData,
+                            note:
+                                e
+                                    .target
+                                    .value,
+                        },
+                    )
+                }
+            />
+        </div>
+
+        {/* Button */}
+        <Button
+            variant="solid"
+            onClick={
+                handleUpdate
+            }
+        >
+            Update Saving
+        </Button>
+
+    </div>
+</Drawer>
         </Container>
     )
 }

@@ -7,11 +7,14 @@ const {
     createExpense,
     getExpenses,
     deleteExpense,
+    updateExpense
 } = require('../controllers/expenseController')
 
 router.post('/create', authMiddleware, createExpense)
 
 router.get('/list', authMiddleware, getExpenses)
+
+router.put('/update/:id', authMiddleware, updateExpense)
 
 router.delete('/delete/:id', authMiddleware, deleteExpense)
 

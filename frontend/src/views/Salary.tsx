@@ -20,7 +20,9 @@ const Salary = () => {
 
     const [year, setYear] =
         useState(
-            new Date().getFullYear().toString(),
+            new Date()
+                .getFullYear()
+                .toString(),
         )
 
     const [
@@ -35,6 +37,21 @@ const Salary = () => {
 
     const [note, setNote] =
         useState('')
+
+    const [
+        extraIncome,
+        setExtraIncome,
+    ] = useState('')
+
+    const [
+        extraSource,
+        setExtraSource,
+    ] = useState('')
+
+    const [
+        extraNote,
+        setExtraNote,
+    ] = useState('')
 
     const [file, setFile] =
         useState<any>(null)
@@ -116,6 +133,21 @@ const Salary = () => {
                 note,
             )
 
+            form.append(
+                'extraIncome',
+                extraIncome,
+            )
+
+            form.append(
+                'extraSource',
+                extraSource,
+            )
+
+            form.append(
+                'extraNote',
+                extraNote,
+            )
+
             if (file) {
                 form.append(
                     'slipFile',
@@ -134,6 +166,9 @@ const Salary = () => {
             setGrossSalary('')
             setDeduction('')
             setNote('')
+            setExtraIncome('')
+            setExtraSource('')
+            setExtraNote('')
             setFile(null)
 
             loadData()
@@ -186,18 +221,18 @@ const Salary = () => {
     return (
         <Container>
 
-            {/* ENTRY FORM */}
+            {/* FORM */}
             <Card>
 
                 <h3 className="text-xl font-bold mb-5">
-                    Salary Entry
+                    Salary +
+                    Extra Income
                 </h3>
 
                 <div className="grid md:grid-cols-2 gap-4">
 
-                    {/* Month */}
                     <div>
-                        <label className="text-sm font-medium mb-2 block">
+                        <label className="mb-2 block text-sm font-medium">
                             Month
                         </label>
 
@@ -237,9 +272,8 @@ const Salary = () => {
                         </select>
                     </div>
 
-                    {/* Year */}
                     <div>
-                        <label className="text-sm font-medium mb-2 block">
+                        <label className="mb-2 block text-sm font-medium">
                             Year
                         </label>
 
@@ -259,14 +293,12 @@ const Salary = () => {
                         />
                     </div>
 
-                    {/* Salary */}
                     <div>
-                        <label className="text-sm font-medium mb-2 block">
-                            Salary Amount
+                        <label className="mb-2 block text-sm font-medium">
+                            Salary
                         </label>
 
                         <Input
-                            placeholder="Enter salary"
                             value={
                                 grossSalary
                             }
@@ -282,14 +314,12 @@ const Salary = () => {
                         />
                     </div>
 
-                    {/* Deduction */}
                     <div>
-                        <label className="text-sm font-medium mb-2 block">
+                        <label className="mb-2 block text-sm font-medium">
                             Deduction
                         </label>
 
                         <Input
-                            placeholder="Enter deduction"
                             value={
                                 deduction
                             }
@@ -305,14 +335,54 @@ const Salary = () => {
                         />
                     </div>
 
-                    {/* Note */}
                     <div>
-                        <label className="text-sm font-medium mb-2 block">
+                        <label className="mb-2 block text-sm font-medium">
+                            Extra Income
+                        </label>
+
+                        <Input
+                            value={
+                                extraIncome
+                            }
+                            onChange={(
+                                e,
+                            ) =>
+                                setExtraIncome(
+                                    e
+                                        .target
+                                        .value,
+                                )
+                            }
+                        />
+                    </div>
+
+                    <div>
+                        <label className="mb-2 block text-sm font-medium">
+                            Source
+                        </label>
+
+                        <Input
+                            value={
+                                extraSource
+                            }
+                            onChange={(
+                                e,
+                            ) =>
+                                setExtraSource(
+                                    e
+                                        .target
+                                        .value,
+                                )
+                            }
+                        />
+                    </div>
+
+                    <div>
+                        <label className="mb-2 block text-sm font-medium">
                             Note
                         </label>
 
                         <Input
-                            placeholder="Optional note"
                             value={
                                 note
                             }
@@ -328,297 +398,436 @@ const Salary = () => {
                         />
                     </div>
 
-                    {/* File */}
+                    {/* <div>
+                        <label className="mb-2 block text-sm font-medium">
+                            Extra Note
+                        </label>
+
+                        <Input
+                            value={
+                                extraNote
+                            }
+                            onChange={(
+                                e,
+                            ) =>
+                                setExtraNote(
+                                    e
+                                        .target
+                                        .value,
+                                )
+                            }
+                        />
+                    </div> */}
+
                     <div>
-                        <label className="text-sm font-medium mb-2 block">
+                        <label className="mb-2 block text-sm font-medium">
                             Salary Slip
                         </label>
 
-                        <div className="border rounded-xl px-4 py-3">
-
-                            <input
-                                type="file"
-                                onChange={(
-                                    e: any,
-                                ) =>
-                                    setFile(
-                                        e
-                                            .target
-                                            .files[0],
-                                    )
-                                }
-                                className="w-full"
-                            />
-
-                            {file && (
-                                <p className="text-xs text-gray-500 mt-2">
-                                    {
-                                        file.name
-                                    }
-                                </p>
-                            )}
-
-                        </div>
+                        <input
+                            type="file"
+                            onChange={(
+                                e: any,
+                            ) =>
+                                setFile(
+                                    e
+                                        .target
+                                        .files[0],
+                                )
+                            }
+                            className="w-full border rounded-xl px-3 py-3"
+                        />
                     </div>
 
                 </div>
 
-                <Button
-                    className="mt-5"
-                    onClick={
-                        submit
-                    }
-                >
-                    Save Salary
-                </Button>
+
+
+<div className="mt-6 flex justify-end gap-3">
+
+    <Button
+        type="button"
+        onClick={() => {
+            setGrossSalary('')
+            setDeduction('')
+            setNote('')
+            setExtraIncome('')
+            setExtraSource('')
+            setExtraNote('')
+            setFile(null)
+            setMonth('January')
+            setYear(
+                new Date()
+                    .getFullYear()
+                    .toString(),
+            )
+        }}
+    >
+        Reset
+    </Button>
+
+    <Button
+        variant="solid"
+        onClick={() => {
+            if (
+                !grossSalary
+            ) {
+                alert(
+                    'Please enter salary amount',
+                )
+                return
+            }
+
+            submit()
+        }}
+    >
+        Save Salary
+    </Button>
+
+</div>
+
+
+
+
+
+
 
             </Card>
 
-            {/* HISTORY */}
+
+            {/* TABLE */}
             <Card className="mt-5">
 
-                {/* FILTERS */}
-                <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-5">
+                <div className="flex flex-col md:flex-row gap-3 md:justify-between mb-5">
 
                     <h3 className="text-xl font-bold">
                         Salary History
                     </h3>
 
-                    <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                    <div className="flex gap-3">
 
-                        {/* Month */}
-                        <div className="w-full sm:w-[220px]">
-                            <select
-                                value={
-                                    filterMonth
-                                }
-                                onChange={(
-                                    e,
-                                ) =>
-                                    setFilterMonth(
-                                        e
-                                            .target
-                                            .value,
-                                    )
-                                }
-                                className="w-full h-12 px-3 rounded-xl border bg-transparent"
-                            >
-                                <option value="All">
-                                    All Months
-                                </option>
+                        <select
+                            value={
+                                filterMonth
+                            }
+                            onChange={(
+                                e,
+                            ) =>
+                                setFilterMonth(
+                                    e
+                                        .target
+                                        .value,
+                                )
+                            }
+                            className="h-11 px-3 rounded-xl border bg-transparent"
+                        >
+                            <option value="All">
+                                All
+                                Months
+                            </option>
 
-                                {months.map(
-                                    (
-                                        item,
-                                    ) => (
-                                        <option
-                                            key={
-                                                item
-                                            }
-                                            value={
-                                                item
-                                            }
-                                        >
-                                            {
-                                                item
-                                            }
-                                        </option>
-                                    ),
-                                )}
-                            </select>
-                        </div>
+                            {months.map(
+                                (
+                                    item,
+                                ) => (
+                                    <option
+                                        key={
+                                            item
+                                        }
+                                    >
+                                        {
+                                            item
+                                        }
+                                    </option>
+                                ),
+                            )}
+                        </select>
 
-                        {/* Year */}
-                        <div className="w-full sm:w-[160px]">
-                            <select
-                                value={
-                                    filterYear
-                                }
-                                onChange={(
-                                    e,
-                                ) =>
-                                    setFilterYear(
-                                        e
-                                            .target
-                                            .value,
-                                    )
-                                }
-                                className="w-full h-12 px-3 rounded-xl border bg-transparent"
-                            >
-                                <option value="All">
-                                    All Years
-                                </option>
-
-                                <option value="2024">
-                                    2024
-                                </option>
-
-                                <option value="2025">
-                                    2025
-                                </option>
-
-                                <option value="2026">
-                                    2026
-                                </option>
-
-                                <option value="2027">
-                                    2027
-                                </option>
-
-                                <option value="2028">
-                                    2028
-                                </option>
-
-                            </select>
-                        </div>
+                        <select
+                            value={
+                                filterYear
+                            }
+                            onChange={(
+                                e,
+                            ) =>
+                                setFilterYear(
+                                    e
+                                        .target
+                                        .value,
+                                )
+                            }
+                            className="h-11 px-3 rounded-xl border bg-transparent"
+                        >
+                            <option value="All">
+                                All
+                                Years
+                            </option>
+                            <option>
+                                2024
+                            </option>
+                            <option>
+                                2025
+                            </option>
+                            <option>
+                                2026
+                            </option>
+                            <option>
+                                2027
+                            </option>
+                        </select>
 
                     </div>
 
                 </div>
 
-                {/* TABLE */}
                 <div className="overflow-x-auto">
 
-                    <table className="w-full min-w-[900px]">
+              <table className="w-full min-w-[1200px]">
 
-                        <thead>
-                            <tr className="border-b text-left">
+    <thead>
+        <tr className="border-b text-left">
 
-                                <th className="py-3">
-                                    No.
-                                </th>
+            <th className="py-3">
+                No.
+            </th>
 
-                                <th className="py-3">
-                                    Month
-                                </th>
+            <th className="py-3">
+                Month
+            </th>
 
-                                <th className="py-3">
-                                    Year
-                                </th>
+            <th className="py-3">
+                Year
+            </th>
 
-                                <th className="py-3">
-                                    Salary
-                                </th>
+            <th className="py-3">
+                Salary
+            </th>
 
-                                <th className="py-3">
-                                    Deduction
-                                </th>
+            <th className="py-3">
+                Deduction
+            </th>
 
-                                <th className="py-3">
-                                    Net Salary
-                                </th>
+            <th className="py-3">
+                Net
+            </th>
 
-                                <th className="py-3">
-                                    Slip
-                                </th>
+            <th className="py-3">
+                Extra
+            </th>
 
-                                <th className="py-3 text-center">
-                                    Action
-                                </th>
+            <th className="py-3">
+                Source
+            </th>
 
-                            </tr>
-                        </thead>
+            <th className="py-3">
+                Final
+            </th>
 
-                        <tbody>
+            <th className="py-3">
+                Slip
+            </th>
 
-                            {filteredData.length >
-                            0 ? (
-                                filteredData.map(
-                                    (
-                                        item,
-                                        i,
-                                    ) => (
-                                        <tr
-                                            key={
-                                                i
-                                            }
-                                            className="border-b"
-                                        >
+            <th className="py-3">
+                Action
+            </th>
 
-                                            <td className="py-4">
-                                                {i +
-                                                    1}
-                                            </td>
+        </tr>
+    </thead>
 
-                                            <td className="py-4 font-semibold">
-                                                {
-                                                    item.month
-                                                }
-                                            </td>
+    <tbody>
 
-                                            <td className="py-4">
-                                                {
-                                                    item.year
-                                                }
-                                            </td>
+        {filteredData.length >
+        0 ? (
+            filteredData.map(
+                (
+                    item,
+                    i,
+                ) => (
+                    <tr
+                        key={
+                            i
+                        }
+                        className="border-b"
+                    >
 
-                                            <td className="py-4">
-                                                ₹
-                                                {
-                                                    item.grossSalary
-                                                }
-                                            </td>
+                        <td className="py-4">
+                            {i + 1}
+                        </td>
 
-                                            <td className="py-4 text-red-500">
-                                                ₹
-                                                {
-                                                    item.deduction
-                                                }
-                                            </td>
+                        <td className="py-4">
+                            {
+                                item.month
+                            }
+                        </td>
 
-                                            <td className="py-4 text-green-500 font-semibold">
-                                                ₹
-                                                {
-                                                    item.netSalary
-                                                }
-                                            </td>
+                        <td className="py-4">
+                            {
+                                item.year
+                            }
+                        </td>
 
-                                            <td className="py-4">
-                                                {item.slipFile ? (
-                                                    <a
-                                                        href={`http://localhost:5000/uploads/salary/${item.slipFile}`}
-                                                        target="_blank"
-                                                        className="text-blue-500"
-                                                    >
-                                                        View
-                                                    </a>
-                                                ) : (
-                                                    '-'
-                                                )}
-                                            </td>
+                        <td className="py-4">
+                            ₹
+                            {
+                                item.grossSalary
+                            }
+                        </td>
 
-                                            <td className="py-4 text-center">
-                                                <Button
-                                                    size="sm"
-                                                    onClick={() =>
-                                                        del(
-                                                            item._id,
-                                                        )
-                                                    }
-                                                >
-                                                    Delete
-                                                </Button>
-                                            </td>
+                        <td className="py-4 text-red-500">
+                            ₹
+                            {
+                                item.deduction
+                            }
+                        </td>
 
-                                        </tr>
-                                    ),
-                                )
+                        <td className="py-4 text-green-500">
+                            ₹
+                            {
+                                item.netSalary
+                            }
+                        </td>
+
+                        <td className="py-4 text-blue-500">
+                            ₹
+                            {item.extraIncome ||
+                                0}
+                        </td>
+
+                        <td className="py-4">
+                            {item.extraSource ||
+                                '-'}
+                        </td>
+
+                        <td className="py-4 font-bold">
+                            ₹
+                            {Number(
+                                item.netSalary ||
+                                    0,
+                            ) +
+                                Number(
+                                    item.extraIncome ||
+                                        0,
+                                )}
+                        </td>
+
+                        <td className="py-4">
+                            {item.slipFile ? (
+                                <a
+                                    href={`http://localhost:5000/uploads/salary/${item.slipFile}`}
+                                    target="_blank"
+                                    className="text-blue-500"
+                                >
+                                    View
+                                </a>
                             ) : (
-                                <tr>
-                                    <td
-                                        colSpan={
-                                            8
-                                        }
-                                        className="py-10 text-center text-gray-500"
-                                    >
-                                        No salary records found
-                                    </td>
-                                </tr>
+                                '-'
                             )}
+                        </td>
 
-                        </tbody>
+                        <td className="py-4">
+                            <div className="flex gap-2">
 
-                    </table>
+                                <Button
+                                    size="sm"
+                                    variant="solid"
+                                    onClick={() => {
+                                        setMonth(
+                                            item.month,
+                                        )
+
+                                        setYear(
+                                            String(
+                                                item.year,
+                                            ),
+                                        )
+
+                                        setGrossSalary(
+                                            String(
+                                                item.grossSalary ||
+                                                    '',
+                                            ),
+                                        )
+
+                                        setDeduction(
+                                            String(
+                                                item.deduction ||
+                                                    '',
+                                            ),
+                                        )
+
+                                        setNote(
+                                            item.note ||
+                                                '',
+                                        )
+
+                                        setExtraIncome(
+                                            String(
+                                                item.extraIncome ||
+                                                    '',
+                                            ),
+                                        )
+
+                                        setExtraSource(
+                                            item.extraSource ||
+                                                '',
+                                        )
+
+                                        setExtraNote(
+                                            item.extraNote ||
+                                                '',
+                                        )
+
+                                        localStorage.setItem(
+                                            'salaryEditId',
+                                            item._id,
+                                        )
+
+                                        window.scrollTo(
+                                            {
+                                                top: 0,
+                                                behavior:
+                                                    'smooth',
+                                            },
+                                        )
+                                    }}
+                                >
+                                    Edit
+                                </Button>
+
+                                <Button
+                                    size="sm"
+                                    onClick={() =>
+                                        del(
+                                            item._id,
+                                        )
+                                    }
+                                >
+                                    Delete
+                                </Button>
+
+                            </div>
+                        </td>
+
+                    </tr>
+                ),
+            )
+        ) : (
+            <tr>
+                <td
+                    colSpan={
+                        11
+                    }
+                    className="py-10 text-center text-gray-500"
+                >
+                    No records
+                    found
+                </td>
+            </tr>
+        )}
+
+    </tbody>
+
+</table>
 
                 </div>
 
