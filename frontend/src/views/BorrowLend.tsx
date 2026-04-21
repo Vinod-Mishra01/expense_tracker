@@ -75,7 +75,7 @@ const BorrowLend = () => {
             setLoading(true)
 
             await axios.post(
-                'http://localhost:5000/api/borrow-lend/create',
+                'https://expense-backend-5myt.onrender.com/api/borrow-lend/create',
                 {
                     ...formData,
                     amount: Number(

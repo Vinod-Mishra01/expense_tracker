@@ -66,15 +66,15 @@ const authToken =
                     await Promise.all(
                         [
                             axios.get(
-                                'http://localhost:5000/api/expense/list',
+                                'https://expense-backend-5myt.onrender.com/api/expense/list',
                                 { headers },
                             ),
                             axios.get(
-                                'http://localhost:5000/api/saving/list',
+                                'https://expense-backend-5myt.onrender.com/api/saving/list',
                                 { headers },
                             ),
                             axios.get(
-                                'http://localhost:5000/api/borrow-lend/list',
+                                'https://expense-backend-5myt.onrender.com/api/borrow-lend/list',
                                 { headers },
                             ),
                         ],

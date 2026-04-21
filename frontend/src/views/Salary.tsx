@@ -92,7 +92,7 @@ const Salary = () => {
         async () => {
             const res =
                 await axios.get(
-                    'http://localhost:5000/api/salary/list',
+                    'https://expense-backend-5myt.onrender.com/api/salary/list',
                     {
                         headers,
                     },
@@ -156,7 +156,7 @@ const Salary = () => {
             }
 
             await axios.post(
-                'http://localhost:5000/api/salary/create',
+                'https://expense-backend-5myt.onrender.com/api/salary/create',
                 form,
                 {
                     headers,
@@ -179,7 +179,7 @@ const Salary = () => {
             id: string,
         ) => {
             await axios.delete(
-                `http://localhost:5000/api/salary/delete/${id}`,
+                `https://expense-backend-5myt.onrender.com/api/salary/delete/${id}`,
                 {
                     headers,
                 },
@@ -713,7 +713,7 @@ const Salary = () => {
                         <td className="py-4">
                             {item.slipFile ? (
                                 <a
-                                    href={`http://localhost:5000/uploads/salary/${item.slipFile}`}
+                                    href={`https://expense-backend-5myt.onrender.com/uploads/salary/${item.slipFile}`}
                                     target="_blank"
                                     className="text-blue-500"
                                 >

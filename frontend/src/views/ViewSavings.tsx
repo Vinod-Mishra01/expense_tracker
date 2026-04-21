@@ -82,7 +82,7 @@ const ViewSavings = () => {
             setLoading(true)
 
             const res = await axios.get(
-                'http://localhost:5000/api/saving/list',
+                'https://expense-backend-5myt.onrender.com/api/saving/list',
                 {
                     headers: {
                         Authorization: `Bearer ${authToken}`,
@@ -117,7 +117,7 @@ const ViewSavings = () => {
     ) => {
         try {
             await axios.delete(
-                `http://localhost:5000/api/saving/delete/${id}`,
+                `https://expense-backend-5myt.onrender.com/api/saving/delete/${id}`,
                 {
                     headers: {
                         Authorization: `Bearer ${authToken}`,
@@ -166,7 +166,7 @@ const ViewSavings = () => {
     const handleUpdate = async () => {
         try {
             await axios.put(
-                `http://localhost:5000/api/saving/update/${editData._id}`,
+                `https://expense-backend-5myt.onrender.com/api/saving/update/${editData._id}`,
                 {
                     title:
                         editData.title,

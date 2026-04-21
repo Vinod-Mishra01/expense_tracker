@@ -87,7 +87,7 @@ const ViewExpenses = () => {
             setLoading(true)
 
             const res = await axios.get(
-                'http://localhost:5000/api/expense/list',
+                'https://expense-backend-5myt.onrender.com/api/expense/list',
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -115,7 +115,7 @@ const ViewExpenses = () => {
     const handleDelete = async (id: string) => {
         try {
             await axios.delete(
-                `http://localhost:5000/api/expense/delete/${id}`,
+                `https://expense-backend-5myt.onrender.com/api/expense/delete/${id}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -152,7 +152,7 @@ const ViewExpenses = () => {
     const handleUpdate = async () => {
         try {
             await axios.put(
-                `http://localhost:5000/api/expense/update/${editData._id}`,
+                `https://expense-backend-5myt.onrender.com/api/expense/update/${editData._id}`,
                 editData,
                 {
                     headers: {

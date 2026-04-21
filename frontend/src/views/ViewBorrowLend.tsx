@@ -101,7 +101,7 @@ const [toDate, setToDate] =
             setLoading(true)
 
             const res = await axios.get(
-                'http://localhost:5000/api/borrow-lend/list',
+                'https://expense-backend-5myt.onrender.com/api/borrow-lend/list',
                 {
                     headers: {
                         Authorization: `Bearer ${authToken}`,
@@ -130,7 +130,7 @@ const [toDate, setToDate] =
         id: string,
     ) => {
         await axios.delete(
-            `http://localhost:5000/api/borrow-lend/delete/${id}`,
+            `https://expense-backend-5myt.onrender.com/api/borrow-lend/delete/${id}`,
             {
                 headers: {
                     Authorization: `Bearer ${authToken}`,
@@ -162,7 +162,7 @@ const [toDate, setToDate] =
 
     const handleUpdate = async () => {
         await axios.put(
-            `http://localhost:5000/api/borrow-lend/update/${editData._id}`,
+            `https://expense-backend-5myt.onrender.com/api/borrow-lend/update/${editData._id}`,
             {
                 ...editData,
                 amount: Number(

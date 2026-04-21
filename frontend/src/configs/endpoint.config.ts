@@ -12,14 +12,14 @@
 
 
 
-// export const apiPrefix = 'http://localhost:5000/api'
+// export const apiPrefix = 'https://expense-backend-5myt.onrender.com/api'
 
 const endpointConfig = {
-    signIn: 'http://localhost:5000/api/auth/login',
-    signOut: 'http://localhost:5000/api/auth/logout',
-    signUp: 'http://localhost:5000/api/auth/register',
-    forgotPassword: 'http://localhost:5000/api/auth/forgot-password',
-    resetPassword: 'http://localhost:5000/api/auth/reset-password',
+    signIn: 'https://expense-backend-5myt.onrender.com/api/auth/login',
+    signOut: 'https://expense-backend-5myt.onrender.com/api/auth/logout',
+    signUp: 'https://expense-backend-5myt.onrender.com/api/auth/register',
+    forgotPassword: 'https://expense-backend-5myt.onrender.com/api/auth/forgot-password',
+    resetPassword: 'https://expense-backend-5myt.onrender.com/api/auth/reset-password',
 }
 
 export default endpointConfig
