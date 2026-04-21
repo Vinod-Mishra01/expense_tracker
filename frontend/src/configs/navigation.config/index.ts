@@ -22,8 +22,19 @@ const navigationConfig: NavigationTree[] = [
             {
                 key: 'home',
                 path: '/home',
-                title: 'Home',
+                title: 'Analytic',
                 translateKey: 'nav.home',
+                icon: 'home',
+                type: NAV_ITEM_TYPE_ITEM,
+                authority: [],
+                subMenu: [],
+            },
+
+             {
+                key: 'manageSalary',
+                path: '/salary',
+                title: 'Manage Salary',
+                translateKey:'nav.manageSalary',
                 icon: 'home',
                 type: NAV_ITEM_TYPE_ITEM,
                 authority: [],

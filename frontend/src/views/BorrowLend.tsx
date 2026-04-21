@@ -1,5 +1,5 @@
 // src/views/BorrowLend.tsx
-// Add Record Page
+// FULL FINAL UPDATED FILE
 
 import { useState } from 'react'
 import Container from '@/components/shared/Container'
@@ -21,6 +21,7 @@ const BorrowLend = () => {
     const today = new Date().toISOString().split('T')[0]
 
     const { token } = useToken()
+
     const authToken =
         token || localStorage.getItem('token')
 
@@ -34,7 +35,7 @@ const BorrowLend = () => {
             amount: '',
             paidAmount: '',
             date: today,
-               returnDate: '',
+            returnDate: '',
             note: '',
         })
 
@@ -62,7 +63,10 @@ const BorrowLend = () => {
                 <Notification type="danger">
                     Please fill all required fields
                 </Notification>,
-                { placement: 'top-center' },
+                {
+                    placement:
+                        'top-center',
+                },
             )
             return
         }
@@ -93,7 +97,10 @@ const BorrowLend = () => {
                 <Notification type="success">
                     Record added successfully
                 </Notification>,
-                { placement: 'top-center' },
+                {
+                    placement:
+                        'top-center',
+                },
             )
 
             setFormData({
@@ -102,7 +109,7 @@ const BorrowLend = () => {
                 amount: '',
                 paidAmount: '',
                 date: today,
-                    returnDate: '',
+                returnDate: '',
                 note: '',
             })
         } catch {
@@ -110,7 +117,10 @@ const BorrowLend = () => {
                 <Notification type="danger">
                     Failed to add record
                 </Notification>,
-                { placement: 'top-center' },
+                {
+                    placement:
+                        'top-center',
+                },
             )
         } finally {
             setLoading(false)
@@ -120,23 +130,28 @@ const BorrowLend = () => {
     return (
         <Container>
             <div className="w-full mx-auto">
+
+                {/* Header */}
                 <div className="mb-6">
                     <h3 className="text-2xl font-bold">
                         Add Record
                     </h3>
+
                     <p className="text-gray-500">
                         Track borrow & lend money
                     </p>
                 </div>
 
+                {/* Form Card */}
                 <div className="bg-white dark:bg-gray-800 rounded-2xl shadow p-6">
+
                     <Form onSubmit={handleSubmit}>
+
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
                             <FormItem label="Type">
                                 <Select
-                                    options={
-                                        typeOptions
-                                    }
+                                    options={typeOptions}
                                     value={typeOptions.find(
                                         (
                                             item,
@@ -158,9 +173,7 @@ const BorrowLend = () => {
 
                             <FormItem label="Person Name">
                                 <Input
-                                    value={
-                                        formData.personName
-                                    }
+                                    value={formData.personName}
                                     onChange={(
                                         e,
                                     ) =>
@@ -176,9 +189,7 @@ const BorrowLend = () => {
                             <FormItem label="Amount">
                                 <Input
                                     type="number"
-                                    value={
-                                        formData.amount
-                                    }
+                                    value={formData.amount}
                                     onChange={(
                                         e,
                                     ) =>
@@ -187,15 +198,14 @@ const BorrowLend = () => {
                                             e.target.value,
                                         )
                                     }
+                                    placeholder="10000"
                                 />
                             </FormItem>
 
                             <FormItem label="Paid / Returned">
                                 <Input
                                     type="number"
-                                    value={
-                                        formData.paidAmount
-                                    }
+                                    value={formData.paidAmount}
                                     onChange={(
                                         e,
                                     ) =>
@@ -204,15 +214,14 @@ const BorrowLend = () => {
                                             e.target.value,
                                         )
                                     }
+                                    placeholder="0"
                                 />
                             </FormItem>
 
-                            <FormItem label="Date">
+                            <FormItem label="Given / Taken Date">
                                 <Input
                                     type="date"
-                                    value={
-                                        formData.date
-                                    }
+                                    value={formData.date}
                                     onChange={(
                                         e,
                                     ) =>
@@ -224,24 +233,43 @@ const BorrowLend = () => {
                                 />
                             </FormItem>
 
-                            <FormItem label="Note">
+                            <FormItem label="Return Date">
                                 <Input
-                                    value={
-                                        formData.note
-                                    }
+                                    type="date"
+                                    value={formData.returnDate}
                                     onChange={(
                                         e,
                                     ) =>
                                         handleChange(
-                                            'note',
+                                            'returnDate',
                                             e.target.value,
                                         )
                                     }
                                 />
                             </FormItem>
+
+                            <div className="md:col-span-2">
+                                <FormItem label="Note">
+                                    <Input
+                                        value={formData.note}
+                                        onChange={(
+                                            e,
+                                        ) =>
+                                            handleChange(
+                                                'note',
+                                                e.target.value,
+                                            )
+                                        }
+                                        placeholder="Optional note"
+                                    />
+                                </FormItem>
+                            </div>
+
                         </div>
 
+                        {/* Buttons */}
                         <div className="mt-6 flex justify-end gap-3">
+
                             <Button
                                 type="button"
                                 onClick={() =>
@@ -254,8 +282,8 @@ const BorrowLend = () => {
                                         paidAmount:
                                             '',
                                         date: today,
-                                             returnDate: '',
-                                        
+                                        returnDate:
+                                            '',
                                         note: '',
                                     })
                                 }
@@ -270,7 +298,9 @@ const BorrowLend = () => {
                             >
                                 Save Record
                             </Button>
+
                         </div>
+
                     </Form>
                 </div>
             </div>

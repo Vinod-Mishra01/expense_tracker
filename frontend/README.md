@@ -1,4 +1,4 @@
-# Ecme - The Ultimate React, Vite & TypeScript Web Template
+# VM TECH - Personal Expense Tracker, Vite & TypeScript Web Template
 
 Ecme  is a modern and responsive admin dashboard template built with React and TypeScript. Designed to provide a highly customizable and easy-to-use platform for building admin interfaces, it includes a variety of reusable components, pre-designed pages, and dynamic features. 
 
@@ -13,12 +13,4 @@ Key Features:
 - **RTL Support**: Full Right-to-Left support for languages like Arabic or Hebrew.
 - **Tailwind Component-Based Architecture**: Reusable components to streamline your development process.
 - **API Ready**: Simple integration with any RESTful API.
-
----
-### Demo
-Check out the [Live Demo](https://ecme-react.themenate.net/) to explore the template in action.
-
-
-### Guide
-Please visit our [Online documentation](https://ecme-react.themenate.net/guide/documentation/introduction) for detailed guides, setup instructions, and customization options.
 

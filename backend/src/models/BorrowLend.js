@@ -42,12 +42,20 @@ const borrowLendSchema = new mongoose.Schema(
         required: true,
     },
 
-    status: {
-        type: String,
-        enum: ['Pending', 'Completed'],
-        default: 'Pending',
-    },
-
+   status: {
+   type: String,
+   enum: ['Active', 'Paid', 'Overdue'],
+   default: 'Active'
+},
+status: {
+    type: String,
+    enum: [
+        'Active',
+        'Paid',
+        'Overdue',
+    ],
+    default: 'Active',
+},
     note: {
         type: String,
         default: '',

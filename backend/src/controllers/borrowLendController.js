@@ -11,6 +11,7 @@ const createRecord = async (req, res) => {
             paidAmount,
             note,
             date,
+            returnDate,
         } = req.body
 
         if (
@@ -36,29 +37,57 @@ const createRecord = async (req, res) => {
         const pending =
             total - paid
 
-        const status =
+        const today =
+            new Date()
+
+        let status =
+            'Active'
+
+        if (
             pending <= 0
-                ? 'Completed'
-                : 'Pending'
+        ) {
+            status =
+                'Paid'
+        } else if (
+            returnDate &&
+            new Date(
+                returnDate,
+            ) < today
+        ) {
+            status =
+                'Overdue'
+        }
 
         const record =
             await BorrowLend.create({
                 userId:
                     req.user.id,
+
                 recordId:
                     'BL' +
                     Date.now(),
+
                 type,
                 personName,
+
                 amount:
                     total,
+
                 paidAmount:
                     paid,
+
                 pendingAmount:
                     pending,
+
                 status,
+
                 note,
+
                 date,
+
+                returnDate:
+                    returnDate ||
+                    null,
             })
 
         res.status(201).json(
@@ -102,6 +131,8 @@ const updateRecord = async (
         const {
             amount,
             paidAmount,
+            returnDate,
+            status,
         } = req.body
 
         const total =
@@ -115,13 +146,37 @@ const updateRecord = async (
         const pending =
             total - paid
 
+        const today =
+            new Date()
+
+        let finalStatus =
+            status ||
+            'Active'
+
+        if (
+            pending <= 0
+        ) {
+            finalStatus =
+                'Paid'
+        } else if (
+            returnDate &&
+            new Date(
+                returnDate,
+            ) < today
+        ) {
+            finalStatus =
+                'Overdue'
+        }
+
         req.body.pendingAmount =
             pending
 
         req.body.status =
-            pending <= 0
-                ? 'Completed'
-                : 'Pending'
+            finalStatus
+
+        req.body.returnDate =
+            returnDate ||
+            null
 
         const updated =
             await BorrowLend.findOneAndUpdate(

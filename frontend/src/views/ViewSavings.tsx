@@ -393,14 +393,20 @@ const ViewSavings = () => {
         <Container>
             <AdaptiveCard>
                 <div className="flex flex-col gap-4">
-                    <h3>
-                        Total Savings ₹
-                        {
-                            totalSavings
-                        }
-                    </h3>
+                 <div className="mb-3 px-1 py-2">
 
-                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+    <h3 className="mb-2">
+        Total Savings   ₹
+        {totalSavings}
+    </h3>
+
+    <p className="text-gray-500">
+        Manage and track all your savings
+    </p>
+
+</div>
+
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-10 mt-4">
                         <div className="w-full md:w-[320px]">
                             <Input
                                 prefix={

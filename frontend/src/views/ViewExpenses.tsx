@@ -304,37 +304,45 @@ const ViewExpenses = () => {
         setToDate('')
     }
 
-    const columns = [
-    {
-        header: 'Expense',
+    // FULL UPDATED COLUMNS
+// ✅ No. column added
+// ✅ Title only in one line
+// ✅ Expense ID small below
+// ✅ Better spacing
 
-        // old sorting kept for future
-        // header: (
-        //     <div
-        //         className="cursor-pointer"
-        //         onClick={() =>
-        //             handleSort('title')
-        //         }
-        //     >
-        //         Expense {sortIcon('title')}
-        //     </div>
-        // ),
+const columns = [
 
-        accessorKey: 'title',
-          enableSorting: false,
-        cell: ({ row }: any) => (
-            <div>
-                <div className="font-semibold">
-                    {row.original.title}
-                </div>
-                <div className="text-xs text-gray-500">
-                    {row.original.expenseId}
-                </div>
+{
+    header: 'No.',
+    enableSorting: false,
+    cell: ({ row }: any) => (
+        <span className="font-semibold">
+            {row.index + 1}
+        </span>
+    ),
+},
+
+{
+    header: 'Title',
+    accessorKey: 'title',
+    enableSorting: false,
+
+    cell: ({ row }: any) => (
+        <div className="min-w-[150px]">
+
+            <div className="font-semibold text-sm leading-tight">
+                {row.original.title}
             </div>
-        ),
-    },
 
-  {
+            <div className="text-xs text-gray-500 mt-1">
+                {row.original.expenseId}
+            </div>
+
+        </div>
+    ),
+},
+
+{
     header: (
         <span
             className="cursor-pointer inline-flex items-center whitespace-nowrap"
@@ -345,34 +353,29 @@ const ViewExpenses = () => {
             Amount
         </span>
     ),
+
     accessorKey: 'amount',
+
     cell: ({ row }: any) => (
-        <span className="font-semibold">
+        <span className="font-semibold text-red-500 whitespace-nowrap">
             ₹ {row.original.amount}
         </span>
     ),
 },
 
-    {
-        header: 'Category',
+{
+    header: 'Category',
+    accessorKey: 'category',
+    enableSorting: false,
 
-        // old sorting kept for future
-        // header: (
-        //     <div
-        //         className="cursor-pointer"
-        //         onClick={() =>
-        //             handleSort('category')
-        //         }
-        //     >
-        //         Category {sortIcon('category')}
-        //     </div>
-        // ),
+    cell: ({ row }: any) => (
+        <span className="px-2 py-1 rounded-full text-xs bg-gray-100 dark:bg-gray-700 whitespace-nowrap">
+            {row.original.category}
+        </span>
+    ),
+},
 
-        accessorKey: 'category',
-          enableSorting: false,
-    },
-
- {
+{
     header: (
         <span
             className="cursor-pointer inline-flex items-center whitespace-nowrap"
@@ -383,14 +386,19 @@ const ViewExpenses = () => {
             Date
         </span>
     ),
+
     accessorKey: 'date',
-    cell: ({ row }: any) =>
-        new Date(
-            row.original.date,
-        ).toLocaleDateString(),
+
+    cell: ({ row }: any) => (
+        <span className="whitespace-nowrap">
+            {new Date(
+                row.original.date,
+            ).toLocaleDateString()}
+        </span>
+    ),
 },
 
-   {
+{
     header: (
         <span
             className="cursor-pointer inline-flex items-center whitespace-nowrap"
@@ -401,46 +409,57 @@ const ViewExpenses = () => {
             Payment
         </span>
     ),
+
     accessorKey: 'paymentMethod',
+
+    cell: ({ row }: any) => (
+        <span className="whitespace-nowrap">
+            {row.original.paymentMethod}
+        </span>
+    ),
 },
 
-    {
-        header: 'Action',
-        id: 'action',
-        cell: ({ row }: any) => (
-            <div className="flex gap-2">
-                <Button
-                    size="sm"
-                    icon={<TbEdit />}
-                    onClick={() =>
-                        handleEditOpen(
-                            row.original,
-                        )
-                    }
-                >
-                    Edit
-                </Button>
+{
+    header: 'Action',
+    id: 'action',
 
-                <Button
-                    size="sm"
-                    icon={<TbTrash />}
-                    onClick={() =>
-                        handleDelete(
-                            row.original._id,
-                        )
-                    }
-                >
-                    Delete
-                </Button>
-            </div>
-        ),
-    },
+    cell: ({ row }: any) => (
+        <div className="flex gap-2 whitespace-nowrap">
+
+            <Button
+                size="sm"
+                icon={<TbEdit />}
+                onClick={() =>
+                    handleEditOpen(
+                        row.original,
+                    )
+                }
+            >
+                Edit
+            </Button>
+
+            <Button
+                size="sm"
+                icon={<TbTrash />}
+                onClick={() =>
+                    handleDelete(
+                        row.original._id,
+                    )
+                }
+            >
+                Delete
+            </Button>
+
+        </div>
+    ),
+},
+
 ]
     return (
         <Container>
             <AdaptiveCard>
-                <div className="flex flex-col gap-4">
-                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                <div className="flex flex-col gap-4 mb-4">
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
                         <h3>Expenses</h3>
 
                         <div className="flex flex-col md:flex-row gap-2">
@@ -486,7 +505,7 @@ const ViewExpenses = () => {
                         </div>
                     </div>
 
-                    <div className="max-w-md">
+                    <div className="max-w-md mb-5">
                         <Input
                             prefix={
                                 <TbSearch />
@@ -663,68 +682,73 @@ const ViewExpenses = () => {
                 </div>
             </Drawer>
 
-            <Drawer
-                title="Edit Expense"
-                isOpen={editOpen}
-                onClose={() =>
-                    setEditOpen(false)
+           <Drawer
+    title="Edit Expense"
+    isOpen={editOpen}
+    onClose={() => setEditOpen(false)}
+    onRequestClose={() => setEditOpen(false)}
+>
+    <div className="flex flex-col gap-4">
+
+        <div>
+            <label className="block mb-1 font-medium">
+                Title
+            </label>
+            <Input
+                placeholder="Enter title"
+                value={editData.title}
+                onChange={(e) =>
+                    setEditData({
+                        ...editData,
+                        title: e.target.value,
+                    })
                 }
-                onRequestClose={() =>
-                    setEditOpen(false)
+            />
+        </div>
+
+        <div>
+            <label className="block mb-1 font-medium">
+                Amount
+            </label>
+            <Input
+                type="number"
+                placeholder="Enter amount"
+                value={editData.amount}
+                onChange={(e) =>
+                    setEditData({
+                        ...editData,
+                        amount: e.target.value,
+                    })
                 }
-            >
-                <div className="flex flex-col gap-4">
-                    <Input
-                        placeholder="Title"
-                        value={editData.title}
-                        onChange={(e) =>
-                            setEditData({
-                                ...editData,
-                                title:
-                                    e.target
-                                        .value,
-                            })
-                        }
-                    />
+            />
+        </div>
 
-                    <Input
-                        type="number"
-                        placeholder="Amount"
-                        value={editData.amount}
-                        onChange={(e) =>
-                            setEditData({
-                                ...editData,
-                                amount:
-                                    e.target
-                                        .value,
-                            })
-                        }
-                    />
+        <div>
+            <label className="block mb-1 font-medium">
+                Date
+            </label>
+            <Input
+                type="date"
+                value={editData.date}
+                onChange={(e) =>
+                    setEditData({
+                        ...editData,
+                        date: e.target.value,
+                    })
+                }
+            />
+        </div>
 
-                    <Input
-                        type="date"
-                        value={editData.date}
-                        onChange={(e) =>
-                            setEditData({
-                                ...editData,
-                                date:
-                                    e.target
-                                        .value,
-                            })
-                        }
-                    />
+        <Button
+            block
+            variant="solid"
+            onClick={handleUpdate}
+        >
+            Update Expense
+        </Button>
 
-                    <Button
-                        block
-                        variant="solid"
-                        onClick={
-                            handleUpdate
-                        }
-                    >
-                        Update Expense
-                    </Button>
-                </div>
-            </Drawer>
+    </div>
+</Drawer>
         </Container>
     )
 }

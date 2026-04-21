@@ -6,6 +6,8 @@ const authRoutes = require('./routes/authRoutes')
 const expenseRoutes = require('./routes/expenseRoutes')
 const savingRoutes = require('./routes/savingRoutes')
 const borrowLendRoutes = require('./routes/borrowLendRoutes')
+const salaryRoutes = require('./routes/salaryRoutes')
+
 const authMiddleware = require('./middleware/authMiddleware')
 
 const connectDb = require('./config/db')
@@ -17,10 +19,13 @@ connectDb()
 app.use(cors())
 app.use(express.json())
 
+app.use('/uploads', express.static('uploads'))
+
 app.use('/api/auth', authRoutes)
 app.use('/api/expense', expenseRoutes)
 app.use('/api/saving', savingRoutes)
 app.use('/api/borrow-lend', borrowLendRoutes)
+app.use('/api/salary', salaryRoutes)
 
 app.get('/', (req, res) => {
     res.send('Personal Expense Tracker API Running')
@@ -38,13 +43,3 @@ const PORT = process.env.PORT || 5000
 app.listen(PORT, () => {
     console.log(`server is running on port ${PORT}`)
 })
-
-
-// server.js
-
-
-
-// server.js
-
-
-

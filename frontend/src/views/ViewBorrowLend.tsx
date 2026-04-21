@@ -1,5 +1,5 @@
 // src/views/ViewBorrowLend.tsx
-// FULL FINAL FIXED FILE
+// FULL UPDATED FINAL FILE
 
 import { useEffect, useMemo, useState } from 'react'
 import Container from '@/components/shared/Container'
@@ -19,6 +19,9 @@ import {
     TbTrash,
     TbEdit,
     TbFilter,
+    // Aur import me add karo
+
+TbSearchOff,
     TbCloudDownload,
 } from 'react-icons/tb'
 import { useNavigate } from 'react-router'
@@ -32,8 +35,9 @@ const typeOptions = [
 
 const statusOptions = [
     { label: 'All', value: '' },
-    { label: 'Pending', value: 'Pending' },
-    { label: 'Completed', value: 'Completed' },
+    { label: 'Active', value: 'Active' },
+    { label: 'Paid', value: 'Paid' },
+    { label: 'Overdue', value: 'Overdue' },
 ]
 
 const ViewBorrowLend = () => {
@@ -64,6 +68,20 @@ const ViewBorrowLend = () => {
     const [status, setStatus] =
         useState('')
 
+        // Add these states if not present
+
+const [minAmount, setMinAmount] =
+    useState('')
+
+const [maxAmount, setMaxAmount] =
+    useState('')
+
+const [fromDate, setFromDate] =
+    useState('')
+
+const [toDate, setToDate] =
+    useState('')
+
     const [editData, setEditData] =
         useState<any>({
             _id: '',
@@ -71,6 +89,8 @@ const ViewBorrowLend = () => {
             personName: '',
             amount: '',
             paidAmount: '',
+            pendingAmount: '',
+            status: 'Active',
             date: '',
             returnDate: '',
             note: '',
@@ -152,6 +172,8 @@ const ViewBorrowLend = () => {
                     Number(
                         editData.paidAmount,
                     ) || 0,
+                status:
+                    editData.status,
             },
             {
                 headers: {
@@ -249,108 +271,237 @@ const ViewBorrowLend = () => {
                     b.amount,
                 0,
             )
+const columns = [
+    {
+        header: 'No.',
+        size: 40,
+        enableSorting: false,
+        cell: ({ row }: any) =>
+            row.index + 1,
+    },
 
-    const columns = [
-        {
-            header: 'Type',
-            accessorKey: 'type',
-            enableSorting: false,
+    {
+        header: 'Type',
+        accessorKey: 'type',
+        size: 80,
+        enableSorting: false,
+    },
+
+    {
+        header: 'Person',
+        accessorKey:
+            'personName',
+        size: 120,
+        enableSorting: false,
+        cell: ({ row }: any) => (
+            <span className="font-medium uppercase">
+                {
+                    row.original
+                        .personName
+                }
+            </span>
+        ),
+    },
+
+    {
+        header: 'Amount',
+        accessorKey:
+            'amount',
+        size: 120,
+        enableSorting: false,
+        cell: ({ row }: any) => (
+            <span className="font-semibold">
+                ₹
+                {
+                    row.original
+                        .amount
+                }
+            </span>
+        ),
+    },
+
+    {
+        header: 'Paid',
+        accessorKey:
+            'paidAmount',
+        size: 100,
+        enableSorting: false,
+        cell: ({ row }: any) => (
+            <span className="font-semibold text-green-600">
+                ₹
+                {
+                    row.original
+                        .paidAmount
+                }
+            </span>
+        ),
+    },
+
+    {
+        header: 'Remaining',
+        accessorKey:
+            'pendingAmount',
+        size: 100,
+        enableSorting: false,
+        cell: ({ row }: any) => (
+            <span className="font-semibold text-red-500">
+                ₹
+                {
+                    row.original
+                        .pendingAmount
+                }
+            </span>
+        ),
+    },
+
+    {
+        header: 'Status',
+        accessorKey:
+            'status',
+        size: 110,
+        cell: ({
+            row,
+        }: any) => {
+            const status =
+                row.original
+                    .status
+
+            let cls =
+                'bg-orange-100 text-orange-700'
+
+            if (
+                status ===
+                'Paid'
+            ) {
+                cls =
+                    'bg-green-100 text-green-700'
+            }
+
+            if (
+                status ===
+                'Overdue'
+            ) {
+                cls =
+                    'bg-red-100 text-red-700'
+            }
+
+            return (
+                <span
+                    className={`px-3 py-1 rounded-full text-xs font-semibold ${cls}`}
+                >
+                    {status}
+                </span>
+            )
         },
-        {
-            header: 'Person',
-            accessorKey:
-                'personName',
-            enableSorting: false,
-        },
-        {
-            header: 'Amount',
-            accessorKey:
-                'amount',
-            enableSorting: false,
-        },
-        {
-            header: 'Paid',
-            accessorKey:
-                'paidAmount',
-            enableSorting: false,
-        },
-        {
-            header: 'Remaining',
-            accessorKey:
-                'pendingAmount',
-            enableSorting: false,
-        },
-        {
-            header: 'Status',
-            accessorKey:
-                'status',
-        },
-        {
-            header: 'Date',
-            accessorKey:
-                'date',
-            cell: ({
-                row,
-            }: any) =>
+    },
+
+    {
+        header: 'Date',
+        accessorKey:
+            'date',
+        size: 120,
+        cell: ({
+            row,
+        }: any) =>
+            new Date(
+                row.original.date,
+            ).toLocaleDateString(),
+    },
+
+    {
+        header:
+            'Return Date',
+        accessorKey:
+            'returnDate',
+        size: 130,
+        cell: ({
+            row,
+        }: any) =>
+            row.original
+                .returnDate
+                ? new Date(
+                      row.original.returnDate,
+                  ).toLocaleDateString()
+                : '-',
+    },
+
+    {
+        header: 'Days',
+        size: 100,
+        enableSorting: false,
+        cell: ({
+            row,
+        }: any) => {
+            const start =
                 new Date(
                     row.original.date,
-                ).toLocaleDateString(),
-        },
-        {
-            header:
-                'Return Date',
-            accessorKey:
-                'returnDate',
-            cell: ({
-                row,
-            }: any) =>
-                row.original
-                    .returnDate
-                    ? new Date(
-                          row.original.returnDate,
-                      ).toLocaleDateString()
-                    : '-',
-        },
-        {
-            header: 'Action',
-            enableSorting: false,
-            cell: ({
-                row,
-            }: any) => (
-                <div className="flex gap-2">
-                    <Button
-                        size="sm"
-                        icon={<TbEdit />}
-                        onClick={() =>
-                            handleEditOpen(
-                                row.original,
-                            )
-                        }
-                    >
-                        Edit
-                    </Button>
+                )
 
-                    <Button
-                        size="sm"
-                        icon={<TbTrash />}
-                        onClick={() =>
-                            handleDelete(
-                                row.original._id,
-                            )
-                        }
-                    >
-                        Delete
-                    </Button>
-                </div>
-            ),
+            const now =
+                new Date()
+
+            const diff =
+                Math.floor(
+                    (
+                        now.getTime() -
+                        start.getTime()
+                    ) /
+                        (
+                            1000 *
+                            60 *
+                            60 *
+                            24
+                        ),
+                )
+
+            return (
+                <span className="font-medium">
+                    {diff} days
+                </span>
+            )
         },
-    ]
+    },
+
+    {
+        header: 'Action',
+        size: 220,
+        enableSorting: false,
+        cell: ({
+            row,
+        }: any) => (
+            <div className="flex gap-2">
+                <Button
+                    size="sm"
+                    icon={<TbEdit />}
+                    onClick={() =>
+                        handleEditOpen(
+                            row.original,
+                        )
+                    }
+                >
+                    Edit
+                </Button>
+
+                <Button
+                    size="sm"
+                    icon={<TbTrash />}
+                    onClick={() =>
+                        handleDelete(
+                            row.original._id,
+                        )
+                    }
+                >
+                    Delete
+                </Button>
+            </div>
+        ),
+    },
+]
 
     return (
         <Container>
             <div className="flex flex-col gap-5">
 
-                {/* Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <AdaptiveCard>
                         <p className="text-sm text-gray-500">
@@ -371,21 +522,21 @@ const ViewBorrowLend = () => {
                     </AdaptiveCard>
                 </div>
 
-                {/* Table Container */}
                 <AdaptiveCard>
                     <div className="flex flex-col gap-4">
 
-                        <div>
-                            <h3>
-                                Borrow & Lend Records
-                            </h3>
-                            <p className="text-gray-500 mt-1">
-                                Manage your records
-                            </p>
-                        </div>
+                   <div className="mb-2">
+    <h3 className="mb-2">
+        Borrow & Lend Records
+    </h3>
 
-                        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+    <p className="text-gray-500">
+        Manage your records
+    </p>
+</div>
 
+
+                     <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mt-5 mb-10">
                             <div className="w-full lg:w-[320px]">
                                 <Input
                                     prefix={<TbSearch />}
@@ -436,217 +587,402 @@ const ViewBorrowLend = () => {
                             </div>
                         </div>
 
-                        <DataTable
-                            columns={columns}
-                            data={filteredData}
-                            loading={loading}
-                        />
+
+
+
+{
+filteredData.length === 0 ? (
+
+    <div className="border rounded-2xl py-16 px-6 text-center bg-gray-50 dark:bg-gray-800">
+
+        <div className="flex justify-center mb-4 text-gray-400 text-5xl">
+            <TbSearchOff />
+        </div>
+
+        <h4 className="text-lg font-semibold mb-2">
+            No Data Found
+        </h4>
+
+        <p className="text-gray-500 text-sm">
+            No records match your search or filter.
+        </p>
+
+        <div className="mt-5">
+            <Button
+                size="sm"
+                onClick={() => {
+                    setSearch('')
+                    setType('')
+                    setStatus('')
+                    setMinAmount('')
+                    setMaxAmount('')
+                    setFromDate('')
+                    setToDate('')
+                }}
+            >
+                Clear Filters
+            </Button>
+        </div>
+
+    </div>
+
+) : (
+
+  // Replace your FULL block with this
+
+// Bro paginationClassName not enough.
+// Add !important tailwind override
+
+<>
+    <div className="overflow-x-auto rounded-xl borrow-scroll">
+        <div className="min-w-[1600px]">
+
+            <DataTable
+                columns={columns}
+                data={filteredData}
+                loading={loading}
+                pagingType="default"
+                paginationClassName="!flex !justify-center !items-center !w-full !py-5 !border-0"
+            />
+
+        </div>
+    </div>
+</>
+)
+}
                     </div>
                 </AdaptiveCard>
             </div>
 
-            {/* Filter Drawer */}
-            <Drawer
-                title="Filter Records"
-                isOpen={filterOpen}
-                onClose={() =>
-                    setFilterOpen(false)
+     
+
+<Drawer
+    title="Filter Records"
+    isOpen={filterOpen}
+    onClose={() =>
+        setFilterOpen(false)
+    }
+    onRequestClose={() =>
+        setFilterOpen(false)
+    }
+>
+    <div className="flex flex-col gap-4">
+
+        {/* Type */}
+        <div>
+            <label className="text-sm font-semibold mb-1 block">
+                Record Type
+            </label>
+
+            <Select
+                options={typeOptions}
+                value={typeOptions.find(
+                    (x) =>
+                        x.value ===
+                        type,
+                )}
+                onChange={(val: any) =>
+                    setType(
+                        val?.value ||
+                            '',
+                    )
                 }
-                onRequestClose={() =>
-                    setFilterOpen(false)
+            />
+        </div>
+
+        {/* Status */}
+        <div>
+            <label className="text-sm font-semibold mb-1 block">
+                Status
+            </label>
+
+            <Select
+                options={statusOptions}
+                value={statusOptions.find(
+                    (x) =>
+                        x.value ===
+                        status,
+                )}
+                onChange={(val: any) =>
+                    setStatus(
+                        val?.value ||
+                            '',
+                    )
+                }
+            />
+        </div>
+
+        {/* Min Amount */}
+        <div>
+            <label className="text-sm font-semibold mb-1 block">
+                Min Amount
+            </label>
+
+            <Input
+                type="number"
+                placeholder="0"
+                value={minAmount}
+                onChange={(e) =>
+                    setMinAmount(
+                        e.target.value,
+                    )
+                }
+            />
+        </div>
+
+        {/* Max Amount */}
+        <div>
+            <label className="text-sm font-semibold mb-1 block">
+                Max Amount
+            </label>
+
+            <Input
+                type="number"
+                placeholder="10000"
+                value={maxAmount}
+                onChange={(e) =>
+                    setMaxAmount(
+                        e.target.value,
+                    )
+                }
+            />
+        </div>
+
+        {/* From Date */}
+        <div>
+            <label className="text-sm font-semibold mb-1 block">
+                From Date
+            </label>
+
+            <Input
+                type="date"
+                value={fromDate}
+                onChange={(e) =>
+                    setFromDate(
+                        e.target.value,
+                    )
+                }
+            />
+        </div>
+
+        {/* To Date */}
+        <div>
+            <label className="text-sm font-semibold mb-1 block">
+                To Date
+            </label>
+
+            <Input
+                type="date"
+                value={toDate}
+                onChange={(e) =>
+                    setToDate(
+                        e.target.value,
+                    )
+                }
+            />
+        </div>
+
+        {/* Buttons */}
+        <div className="grid grid-cols-2 gap-3 pt-2">
+
+            <Button
+                onClick={() => {
+                    setType('')
+                    setStatus('')
+                    setMinAmount('')
+                    setMaxAmount('')
+                    setFromDate('')
+                    setToDate('')
+                }}
+            >
+                Reset
+            </Button>
+
+            <Button
+                variant="solid"
+                onClick={() =>
+                    setFilterOpen(
+                        false,
+                    )
                 }
             >
-                <div className="flex flex-col gap-4">
-                    <Select
-                        options={typeOptions}
-                        value={typeOptions.find(
-                            (x) =>
-                                x.value === type,
-                        )}
-                        onChange={(val: any) =>
-                            setType(
-                                val?.value || '',
-                            )
-                        }
-                    />
+                Apply
+            </Button>
 
-                    <Select
-                        options={statusOptions}
-                        value={statusOptions.find(
-                            (x) =>
-                                x.value === status,
-                        )}
-                        onChange={(val: any) =>
-                            setStatus(
-                                val?.value || '',
-                            )
-                        }
-                    />
+        </div>
+    </div>
+</Drawer>
 
-                    <Button
-                        variant="solid"
-                        onClick={() =>
-                            setFilterOpen(false)
-                        }
-                    >
-                        Apply
-                    </Button>
-                </div>
-            </Drawer>
 
-            {/* Edit Drawer */}
-            <Drawer
-                title="Edit Record"
-                isOpen={editOpen}
-                onClose={() =>
-                    setEditOpen(false)
+
+<Drawer
+    title="Edit Record"
+    isOpen={editOpen}
+    onClose={() =>
+        setEditOpen(false)
+    }
+    onRequestClose={() =>
+        setEditOpen(false)
+    }
+>
+    <div className="flex flex-col gap-4">
+
+        <div>
+            <label className="text-sm font-semibold mb-1 block">
+                Type
+            </label>
+            <Select
+                options={typeOptions.filter(
+                    (x) =>
+                        x.value !== '',
+                )}
+                value={typeOptions.find(
+                    (x) =>
+                        x.value ===
+                        editData.type,
+                )}
+                onChange={(val: any) =>
+                    setEditData({
+                        ...editData,
+                        type: val?.value,
+                    })
                 }
-                onRequestClose={() =>
-                    setEditOpen(false)
+            />
+        </div>
+
+        <div>
+            <label className="text-sm font-semibold mb-1 block">
+                Person Name
+            </label>
+            <Input
+                value={editData.personName}
+                onChange={(e) =>
+                    setEditData({
+                        ...editData,
+                        personName:
+                            e.target.value,
+                    })
                 }
-            >
-                <div className="flex flex-col gap-4">
+            />
+        </div>
 
-                    <div>
-                        <label className="text-sm font-semibold mb-1 block">
-                            Type
-                        </label>
-                        <Select
-                            options={typeOptions.filter(
-                                (x) =>
-                                    x.value !== '',
-                            )}
-                            value={typeOptions.find(
-                                (x) =>
-                                    x.value ===
-                                    editData.type,
-                            )}
-                            onChange={(val: any) =>
-                                setEditData({
-                                    ...editData,
-                                    type:
-                                        val?.value,
-                                })
-                            }
-                        />
-                    </div>
+        <div>
+            <label className="text-sm font-semibold mb-1 block">
+                Amount
+            </label>
+            <Input
+                type="number"
+                value={editData.amount}
+                onChange={(e) =>
+                    setEditData({
+                        ...editData,
+                        amount:
+                            e.target.value,
+                    })
+                }
+            />
+        </div>
 
-                    <div>
-                        <label className="text-sm font-semibold mb-1 block">
-                            Person Name
-                        </label>
-                        <Input
-                            value={
-                                editData.personName
-                            }
-                            onChange={(e) =>
-                                setEditData({
-                                    ...editData,
-                                    personName:
-                                        e.target.value,
-                                })
-                            }
-                        />
-                    </div>
+        <div>
+            <label className="text-sm font-semibold mb-1 block">
+                Paid Amount
+            </label>
+            <Input
+                type="number"
+                value={editData.paidAmount}
+                onChange={(e) =>
+                    setEditData({
+                        ...editData,
+                        paidAmount:
+                            e.target.value,
+                    })
+                }
+            />
+        </div>
 
-                    <div>
-                        <label className="text-sm font-semibold mb-1 block">
-                            Amount
-                        </label>
-                        <Input
-                            type="number"
-                            value={
-                                editData.amount
-                            }
-                            onChange={(e) =>
-                                setEditData({
-                                    ...editData,
-                                    amount:
-                                        e.target.value,
-                                })
-                            }
-                        />
-                    </div>
+        <div>
+            <label className="text-sm font-semibold mb-1 block">
+                Date
+            </label>
+            <Input
+                type="date"
+                value={editData.date}
+                onChange={(e) =>
+                    setEditData({
+                        ...editData,
+                        date:
+                            e.target.value,
+                    })
+                }
+            />
+        </div>
 
-                    <div>
-                        <label className="text-sm font-semibold mb-1 block">
-                            Paid Amount
-                        </label>
-                        <Input
-                            type="number"
-                            value={
-                                editData.paidAmount
-                            }
-                            onChange={(e) =>
-                                setEditData({
-                                    ...editData,
-                                    paidAmount:
-                                        e.target.value,
-                                })
-                            }
-                        />
-                    </div>
+        <div>
+            <label className="text-sm font-semibold mb-1 block">
+                Return Date
+            </label>
+            <Input
+                type="date"
+                value={editData.returnDate}
+                onChange={(e) =>
+                    setEditData({
+                        ...editData,
+                        returnDate:
+                            e.target.value,
+                    })
+                }
+            />
+        </div>
 
-                    <div>
-                        <label className="text-sm font-semibold mb-1 block">
-                            Date
-                        </label>
-                        <Input
-                            type="date"
-                            value={editData.date}
-                            onChange={(e) =>
-                                setEditData({
-                                    ...editData,
-                                    date:
-                                        e.target.value,
-                                })
-                            }
-                        />
-                    </div>
+        <div>
+            <label className="text-sm font-semibold mb-1 block">
+                Note
+            </label>
+            <Input
+                value={editData.note}
+                onChange={(e) =>
+                    setEditData({
+                        ...editData,
+                        note:
+                            e.target.value,
+                    })
+                }
+            />
+        </div>
 
-                    <div>
-                        <label className="text-sm font-semibold mb-1 block">
-                            Return Date
-                        </label>
-                        <Input
-                            type="date"
-                            value={
-                                editData.returnDate
-                            }
-                            onChange={(e) =>
-                                setEditData({
-                                    ...editData,
-                                    returnDate:
-                                        e.target.value,
-                                })
-                            }
-                        />
-                    </div>
+        <div>
+            <label className="text-sm font-semibold mb-1 block">
+                Status
+            </label>
+            <Select
+                options={statusOptions.filter(
+                    (x) =>
+                        x.value !== '',
+                )}
+                value={statusOptions.find(
+                    (x) =>
+                        x.value ===
+                        editData.status,
+                )}
+                onChange={(val: any) =>
+                    setEditData({
+                        ...editData,
+                        status:
+                            val?.value,
+                    })
+                }
+            />
+        </div>
 
-                    <div>
-                        <label className="text-sm font-semibold mb-1 block">
-                            Note
-                        </label>
-                        <Input
-                            value={editData.note}
-                            onChange={(e) =>
-                                setEditData({
-                                    ...editData,
-                                    note:
-                                        e.target.value,
-                                })
-                            }
-                        />
-                    </div>
+        <Button
+            variant="solid"
+            onClick={handleUpdate}
+        >
+            Update Record
+        </Button>
 
-                    <Button
-                        variant="solid"
-                        onClick={handleUpdate}
-                    >
-                        Update Record
-                    </Button>
-                </div>
-            </Drawer>
+    </div>
+</Drawer>
         </Container>
     )
 }
