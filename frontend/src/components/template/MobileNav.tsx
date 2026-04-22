@@ -2,6 +2,7 @@ import { useState, Suspense, lazy } from 'react'
 import classNames from 'classnames'
 import Drawer from '@/components/ui/Drawer'
 import NavToggle from '@/components/shared/NavToggle'
+import Logo from '@/components/template/Logo'
 import { DIR_RTL } from '@/constants/theme.constant'
 import withHeaderItem, { WithHeaderItemProps } from '@/utils/hoc/withHeaderItem'
 import navigationConfig from '@/configs/navigation.config'
@@ -50,7 +51,9 @@ const MobileNav = ({
                 <MobileNavToggle toggled={isOpen} />
             </div>
             <Drawer
-                title="Navigation"
+              title={ <div className="w-35">
+     <Logo />
+  </div>}
                 isOpen={isOpen}
                 bodyClass={classNames('p-0')}
                 width={330}
