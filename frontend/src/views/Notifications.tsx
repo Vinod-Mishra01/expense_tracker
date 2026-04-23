@@ -55,7 +55,7 @@ const authToken =
         async () => {
             try {
             const headers = {
-   Authorization: `Bearer ${token}`,
+   Authorization: `Bearer ${authToken}`,
 }
 
                 const [

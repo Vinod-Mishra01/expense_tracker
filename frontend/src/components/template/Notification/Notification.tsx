@@ -58,7 +58,7 @@ const authToken =
         async () => {
             try {
              const headers = {
-   Authorization: `Bearer ${token}`,
+   Authorization: `Bearer ${authToken}`,
 }
 
                 const list: NotifyItem[] =
@@ -529,22 +529,21 @@ useEffect(() => {
                     ),
                 )}
             </ScrollBar>
-
-            <Dropdown.Item variant="header">
-                <div className="pt-4">
-                    <Button
-                        block
-                        variant="solid"
-                        onClick={() =>
-                            navigate(
-                                '/notifications',
-                            )
-                        }
-                    >
-                        View All Activity
-                    </Button>
-                </div>
-            </Dropdown.Item>
+<Dropdown.Item variant="header">
+    <div className="pt-4 w-full">
+        <button
+            type="button"
+            className="w-full bg-primary text-white rounded-lg px-4 py-2"
+            onClick={() => {
+                navigate(
+                    '/notifications',
+                )
+            }}
+        >
+            View All Activity
+        </button>
+    </div>
+</Dropdown.Item>
         </Dropdown>
     )
 }
