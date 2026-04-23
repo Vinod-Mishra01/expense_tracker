@@ -7,7 +7,7 @@ const expenseRoutes = require('./routes/expenseRoutes')
 const savingRoutes = require('./routes/savingRoutes')
 const borrowLendRoutes = require('./routes/borrowLendRoutes')
 const salaryRoutes = require('./routes/salaryRoutes')
-
+const aiRoutes = require('./routes/aiRoutes')
 const authMiddleware = require('./middleware/authMiddleware')
 
 const connectDb = require('./config/db')
@@ -26,6 +26,8 @@ app.use('/api/expense', expenseRoutes)
 app.use('/api/saving', savingRoutes)
 app.use('/api/borrow-lend', borrowLendRoutes)
 app.use('/api/salary', salaryRoutes)
+app.use('/api/ai', aiRoutes)
+
 
 app.get('/', (req, res) => {
     res.send('Personal Expense Tracker API Running')
