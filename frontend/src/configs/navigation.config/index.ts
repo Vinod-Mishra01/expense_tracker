@@ -151,6 +151,29 @@ const navigationConfig: NavigationTree[] = [
                     },
                 ],
             },
+
+// AI LABEL
+{
+    key: 'aiLabel',
+    path: '',
+    title: 'AI Assistant',
+    translateKey: 'nav.aiLabel',
+    icon: '',
+    type: NAV_ITEM_TYPE_TITLE,
+    authority: [],
+    subMenu: [
+        {
+            key: 'chat',
+            path: '/chat',
+            title: 'Ask AI',
+            translateKey: 'nav.chat',
+            icon: 'aiChat',
+            type: NAV_ITEM_TYPE_ITEM,
+            authority: [],
+            subMenu: [],
+        },
+    ],
+},
         ],
     },
 ]

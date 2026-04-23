@@ -81,10 +81,14 @@ Rules:
             reply,
         })
     } catch (error) {
-        res.status(500).json({
-            reply: 'AI reply failed',
-        })
-    }
+    console.log('AI ERROR:', error)
+
+    res.status(500).json({
+        reply:
+            error.message ||
+            'AI reply failed',
+    })
+}
 }
 
 module.exports = { askAi }
