@@ -377,18 +377,51 @@ const availableBalance =
     totalSaving
 
 const pendingBorrow =
-    borrow.reduce(
-        (
-            a,
-            b,
-        ) =>
-            a +
-            Number(
-                b.pendingAmount ||
-                    0,
-            ),
-        0,
-    )
+    borrow
+        .filter(
+            (
+                item,
+            ) =>
+                item.type ===
+                'Borrow',
+        )
+        .reduce(
+            (
+                a,
+                b,
+            ) =>
+                a +
+                Number(
+                    item?.pendingAmount ||
+                        b?.pendingAmount ||
+                        0,
+                ),
+            0,
+        )
+
+const pendingLend =
+    borrow
+        .filter(
+            (
+                item,
+            ) =>
+                item.type ===
+                'Lend',
+        )
+        .reduce(
+            (
+                a,
+                b,
+            ) =>
+                a +
+                Number(
+                    item?.pendingAmount ||
+                        b?.pendingAmount ||
+                        0,
+                ),
+            0,
+        )
+
 
 const expenseRatio =
     totalSalary >
@@ -504,31 +537,12 @@ return (
             <Container>
                 <div className="flex flex-col gap-4">
 
-                    <div className="flex gap-3">
+                    <div className="flex gap-3 ">
+
+                   
 
                         <Select
-                            className="w-[180px]"
-                            value={monthOptions.find(
-                                (
-                                    x,
-                                ) =>
-                                    x.value ===
-                                    selectedMonth,
-                            )}
-                            options={
-                                monthOptions
-                            }
-                            onChange={(
-                                val: any,
-                            ) =>
-                                setSelectedMonth(
-                                    val.value,
-                                )
-                            }
-                        />
-
-                        <Select
-                            className="w-[140px]"
+                            className="w-[150px] border-1 rounded-lg"
                             value={yearOptions.find(
                                 (
                                     x,
@@ -548,6 +562,27 @@ return (
                             }
                         />
 
+                             <Select
+                            className="w-[150px]  border-1 rounded-lg"
+                            value={monthOptions.find(
+                                (
+                                    x,
+                                ) =>
+                                    x.value ===
+                                    selectedMonth,
+                            )}
+                            options={
+                                monthOptions
+                            }
+                            onChange={(
+                                val: any,
+                            ) =>
+                                setSelectedMonth(
+                                    val.value,
+                                )
+                            }
+                        />
+
                     </div>
 
                     <div className="flex flex-col xl:flex-row gap-4">
@@ -556,7 +591,34 @@ return (
 
                             <Card>
 
-                                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 ">
+
+
+                                               <button
+                                        onClick={() =>
+                                            setActiveTab(
+                                                'balance',
+                                            )
+                                        }
+                                        className={`${activeClass(
+                                            'balance',
+                                        )} rounded-2xl p-4 border-1  text-left`}
+                                    >
+                                        <div className="flex justify-between">
+                                            <span>
+                                                Balance
+                                            </span>
+                                            <TbWallet />
+                                        </div>
+
+                                        <h3 className="mt-3 text-[22px] " >
+                                            ₹
+                                            {availableBalance}
+                                        </h3>
+                                    </button>
+
+
+
 
                                     <button
                                         onClick={() =>
@@ -566,7 +628,7 @@ return (
                                         }
                                         className={`${activeClass(
                                             'expense',
-                                        )} rounded-2xl p-4 text-left`}
+                                        )} rounded-2xl p-4  border-1 text-left`}
                                     >
                                         <div className="flex justify-between">
                                             <span>
@@ -575,7 +637,7 @@ return (
                                             <TbReceipt2 />
                                         </div>
 
-                                        <h3 className="mt-3">
+                                        <h3 className="mt-3 text-[22px]">
                                             ₹
                                             {totalExpense}
                                         </h3>
@@ -589,7 +651,7 @@ return (
                                         }
                                         className={`${activeClass(
                                             'saving',
-                                        )} rounded-2xl p-4 text-left`}
+                                        )} rounded-2xl p-4 border-1  text-left`}
                                     >
                                         <div className="flex justify-between">
                                             <span>
@@ -598,57 +660,37 @@ return (
                                             <TbPigMoney />
                                         </div>
 
-                                        <h3 className="mt-3">
+                                        <h3 className="mt-3 text-[22px]">
                                             ₹
                                             {totalSaving}
                                         </h3>
                                     </button>
 
-                                    <button
-                                        onClick={() =>
-                                            setActiveTab(
-                                                'balance',
-                                            )
-                                        }
-                                        className={`${activeClass(
-                                            'balance',
-                                        )} rounded-2xl p-4 text-left`}
-                                    >
-                                        <div className="flex justify-between">
-                                            <span>
-                                                Balance
-                                            </span>
-                                            <TbWallet />
-                                        </div>
+                         
 
-                                        <h3 className="mt-3">
-                                            ₹
-                                            {availableBalance}
-                                        </h3>
-                                    </button>
 
-                                    <button
-                                        onClick={() =>
-                                            setActiveTab(
-                                                'borrow',
-                                            )
-                                        }
-                                        className={`${activeClass(
-                                            'borrow',
-                                        )} rounded-2xl p-4 text-left`}
-                                    >
-                                        <div className="flex justify-between">
-                                            <span>
-                                                Borrow
-                                            </span>
-                                            <TbArrowBackUp />
-                                        </div>
+<button
+    onClick={() =>
+        setActiveTab(
+            'borrow',
+        )
+    }
+    className={`${activeClass(
+        'borrow',
+    )} rounded-2xl p-4 border-1 text-left`}
+>
+    <div className="flex justify-between">
+        <span>
+            Borrow / Lend
+        </span>
 
-                                        <h3 className="mt-3">
-                                            ₹
-                                            {pendingBorrow}
-                                        </h3>
-                                    </button>
+        <TbArrowBackUp />
+    </div>
+
+    <h3 className="mt-3">
+        ₹{pendingBorrow} / ₹{pendingLend}
+    </h3>
+</button>
 
                                 </div>
 
@@ -684,7 +726,7 @@ return (
 
                         </div>
 
-                        <div className="w-full xl:w-[360px] flex flex-col gap-4">
+                        <div className="w-full xl:w-[260px] grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 gap-4">
 
                             <Card>
                                 <div className="flex justify-between mb-3">
