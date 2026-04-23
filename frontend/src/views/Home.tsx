@@ -48,7 +48,7 @@ const Home = () => {
         useState<any[]>([])
 
     const [activeTab, setActiveTab] =
-        useState('expense')
+        useState('balance')
 
  // REPLACE EVERYTHING FROM const now = new Date()  TILL  return
 // in your Home.tsx with this cleaned fixed block
@@ -392,8 +392,7 @@ const pendingBorrow =
             ) =>
                 a +
                 Number(
-                    item?.pendingAmount ||
-                        b?.pendingAmount ||
+                    b.pendingAmount ||
                         0,
                 ),
             0,
@@ -415,8 +414,7 @@ const pendingLend =
             ) =>
                 a +
                 Number(
-                    item?.pendingAmount ||
-                        b?.pendingAmount ||
+                    b.pendingAmount ||
                         0,
                 ),
             0,
@@ -481,6 +479,11 @@ const categoryData =
         monthlyExpenses,
     ])
 
+
+
+
+
+
 const recentExpenses =
     [
         ...monthlyExpenses,
@@ -498,6 +501,10 @@ const recentExpenses =
                 ).getTime(),
         )
         .slice(0, 5)
+
+
+
+
 
 const chartDays =
     monthlyExpenses.map(
@@ -517,6 +524,90 @@ const chartAmounts =
             Number(
                 item.amount,
             ),
+    )
+
+ const chartLabels = [
+    ...new Set([
+        ...monthlyExpenses.map(
+            (x) =>
+                new Date(
+                    x.date,
+                ).getDate(),
+        ),
+        ...monthlySavings.map(
+            (x) =>
+                new Date(
+                    x.date,
+                ).getDate(),
+        ),
+    ]),
+].sort(
+    (
+        a,
+        b,
+    ) => a - b,
+)
+
+const chartExpenseData =
+    chartLabels.map(
+        (day) =>
+            monthlyExpenses
+                .filter(
+                    (x) =>
+                        new Date(
+                            x.date,
+                        ).getDate() ===
+                        day,
+                )
+                .reduce(
+                    (
+                        a,
+                        b,
+                    ) =>
+                        a +
+                        Number(
+                            b.amount ||
+                                0,
+                        ),
+                    0,
+                ),
+    )
+
+const chartSavingData =
+    chartLabels.map(
+        (day) =>
+            monthlySavings
+                .filter(
+                    (x) =>
+                        new Date(
+                            x.date,
+                        ).getDate() ===
+                        day,
+                )
+                .reduce(
+                    (
+                        a,
+                        b,
+                    ) =>
+                        a +
+                        Number(
+                            b.amount ||
+                                0,
+                        ),
+                    0,
+                ),
+    )
+
+const chartBorrowData =
+    chartLabels.map(
+        () =>
+            pendingBorrow,
+    )
+
+const chartLendData =
+    chartLabels.map(
+        () =>
+            pendingLend,
     )
 
 const activeClass =
@@ -694,35 +785,144 @@ return (
 
                                 </div>
 
+
+
+
+
+
+
+
                                 <div className="mt-5">
 
-                                    <Chart
-                                        type="line"
-                                        height="420px"
-                                        series={[
-                                            {
-                                                name: 'Expense',
-                                                data: chartAmounts,
-                                            },
-                                        ]}
-                                        xAxis={chartDays}
-                                        customOptions={{
-                                            dataLabels: {
-                                                enabled: false,
-                                            },
-                                            stroke: {
-                                                curve: 'smooth',
-                                                width: 3,
-                                            },
-                                            markers: {
-                                                size: 4,
-                                            },
-                                        }}
-                                    />
+                                 <Chart
+    type="line"
+    height={420}
+    series={
+        activeTab ===
+        'balance'
+            ? [
+                  {
+                      name: 'Expense',
+                      data: chartExpenseData,
+                  },
+                  {
+                      name: 'Saving',
+                      data: chartSavingData,
+                  },
+                           {
+                      name: 'Borrow',
+                      data: chartBorrowData,
+                  },
+                  {
+                      name: 'Lend',
+                      data: chartLendData,
+                  },
+              ]
+            : activeTab ===
+              'expense'
+            ? [
+                  {
+                      name: 'Expense',
+                      data: chartExpenseData,
+                  },
+              ]
+            : activeTab ===
+              'saving'
+            ? [
+                  {
+                      name: 'Saving',
+                      data: chartSavingData,
+                  },
+              ]
+            : [
+               
+                  {
+                      name: 'Lend',
+                      data: chartLendData,
+                  },
+              ]
+    }
+    options={{
+        chart: {
+            toolbar: {
+                show: false,
+            },
+            zoom: {
+                enabled: false,
+            },
+        },
 
-                                </div>
+        stroke: {
+            curve: 'smooth',
+            width:
+                activeTab ===
+                'balance'
+                    ? [4, 4, 4]
+                    : activeTab ===
+                      'borrow'
+                    ? [4, 4]
+                    : [4],
+            dashArray:
+                activeTab ===
+                'balance'
+                    ? [0, 6, 8]
+                    : [0],
+        },
 
+        dataLabels: {
+            enabled: false,
+        },
+
+        legend: {
+            show: true,
+            position: 'top',
+        },
+
+        xaxis: {
+            categories:
+                chartLabels.map(
+                    (
+                        x,
+                    ) =>
+                        String(
+                            x,
+                        ),
+                ),
+        },
+
+        yaxis: {
+            labels: {
+                formatter:
+                    (
+                        val,
+                    ) =>
+                        `₹${Math.round(
+                            val,
+                        )}`,
+            },
+        },
+
+        tooltip: {
+            y: {
+                formatter:
+                    (
+                        val,
+                    ) =>
+                        `₹${val}`,
+            },
+        },
+
+        grid: {
+            borderColor:
+                '#e5e7eb',
+        },
+    }}
+/>
+</div>
                             </Card>
+
+
+
 
                         </div>
 
