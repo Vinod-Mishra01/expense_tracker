@@ -11,62 +11,45 @@ const groq = new Groq({
 
 const askAi = async (req, res) => {
     try {
+        console.log(
+            process.env.GROQ_API_KEY
+                ? 'GROQ KEY OK'
+                : 'NO GROQ KEY',
+        )
+
         const { message } = req.body
         const userId = req.user.id
 
-        const expenses =
-            await Expense.find({ userId })
+        const expenses = await Expense.find({ userId })
+        const savings = await Saving.find({ userId })
+        const salaries = await Salary.find({ userId })
+        const borrow = await BorrowLend.find({ userId })
 
-        const savings =
-            await Saving.find({ userId })
+        const totalExpense = expenses.reduce(
+            (a, b) => a + Number(b.amount || 0),
+            0,
+        )
 
-        const salaries =
-            await Salary.find({ userId })
+        const totalSaving = savings.reduce(
+            (a, b) => a + Number(b.amount || 0),
+            0,
+        )
 
-        const borrow =
-            await BorrowLend.find({ userId })
+        const totalSalary = salaries.reduce(
+            (a, b) => a + Number(b.netSalary || 0),
+            0,
+        )
 
-        const totalExpense =
-            expenses.reduce(
-                (a, b) =>
-                    a +
-                    Number(
-                        b.amount || 0,
-                    ),
-                0,
-            )
-
-        const totalSaving =
-            savings.reduce(
-                (a, b) =>
-                    a +
-                    Number(
-                        b.amount || 0,
-                    ),
-                0,
-            )
-
-        const totalSalary =
-            salaries.reduce(
-                (a, b) =>
-                    a +
-                    Number(
-                        b.netSalary ||
-                            0,
-                    ),
-                0,
-            )
-
-        const pendingBorrow =
-            borrow.reduce(
-                (a, b) =>
-                    a +
-                    Number(
-                        b.pendingAmount ||
-                            0,
-                    ),
-                0,
-            )
+        const pendingBorrow = borrow.reduce(
+            (a, b) =>
+                a +
+                Number(
+                    b.pendingAmount ||
+                        b.amount ||
+                        0,
+                ),
+            0,
+        )
 
         const balance =
             totalSalary +
@@ -77,55 +60,45 @@ const askAi = async (req, res) => {
         const prompt = `
 You are a smart finance assistant.
 
-User financial summary:
-Total Salary: ₹${totalSalary}
-Total Expense: ₹${totalExpense}
-Total Savings: ₹${totalSaving}
-Pending Borrow/Lend: ₹${pendingBorrow}
-Estimated Balance: ₹${balance}
+Salary: ₹${totalSalary}
+Expense: ₹${totalExpense}
+Savings: ₹${totalSaving}
+Borrow Pending: ₹${pendingBorrow}
+Balance: ₹${balance}
 
-User Question:
+Question:
 ${message}
 
-Rules:
-1. If finance question, answer from summary.
-2. Keep answer short.
-3. If general question, answer normally.
+Reply short and clear.
 `
 
         const chat =
-            await groq.chat.completions.create(
-                {
-                    messages: [
-                        {
-                            role: 'user',
-                            content:
-                                prompt,
-                        },
-                    ],
-                    model:
-                        'llama3-70b-8192',
-                },
-            )
+            await groq.chat.completions.create({
+                model: 'llama3-8b-8192',
+                messages: [
+                    {
+                        role: 'user',
+                        content: prompt,
+                    },
+                ],
+                temperature: 0.7,
+            })
 
         const reply =
-            chat.choices[0]
-                .message
-                .content
+            chat?.choices?.[0]
+                ?.message?.content ||
+            'No reply found'
 
-        res.json({
-            reply,
-        })
+        res.json({ reply })
     } catch (error) {
-        console.log(error)
+        console.log('AI ERROR:', error)
 
         res.status(500).json({
             reply:
+                error.message ||
                 'AI reply failed',
         })
     }
 }
 
-module.exports = {
-    askAi,
-}
+module.exports = { askAi }
