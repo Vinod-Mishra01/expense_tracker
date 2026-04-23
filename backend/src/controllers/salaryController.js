@@ -83,8 +83,61 @@ const deleteSalary =
         })
     }
 
+const updateSalary = async (req, res) => {
+    try {
+        const {
+            month,
+            year,
+            grossSalary,
+            deduction,
+            note,
+        } = req.body
+
+        const netSalary =
+            Number(grossSalary) -
+            Number(deduction || 0)
+
+        const oldData =
+            await Salary.findOne({
+                _id: req.params.id,
+                userId: req.user.id,
+            })
+
+        const data =
+            await Salary.findOneAndUpdate(
+                {
+                    _id: req.params.id,
+                    userId: req.user.id,
+                },
+                {
+                    month,
+                    year,
+                    grossSalary,
+                    deduction,
+                    netSalary,
+                    note,
+                    slipFile:
+                        req.file?.filename ||
+                        oldData?.slipFile ||
+                        '',
+                },
+                {
+                    new: true,
+                },
+            )
+
+        res.json(data)
+    } catch {
+        res.status(500).json({
+            message: 'Update failed',
+        })
+    }
+}
+
+
 module.exports = {
     createSalary,
     getSalary,
     deleteSalary,
+    updateSalary,
 }

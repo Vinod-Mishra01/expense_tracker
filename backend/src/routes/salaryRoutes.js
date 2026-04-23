@@ -11,6 +11,7 @@ const {
     createSalary,
     getSalary,
     deleteSalary,
+    updateSalary,
 } = require('../controllers/salaryController')
 
 /* create folder if not exists */
@@ -139,6 +140,15 @@ router.get(
     auth,
     getSalary,
 )
+
+
+router.put(
+    '/update/:id',
+    auth,
+    upload.single('slipFile'),
+    updateSalary,
+)
+
 
 /* delete salary */
 router.delete(
