@@ -230,6 +230,7 @@ const askAi = async (
             totalLend
 
      /* PERSON SEARCH FIRST */
+/* PERSON SEARCH FIRST */
 const cleanName = message
     .toLowerCase()
     .replace(
@@ -238,100 +239,84 @@ const cleanName = message
     )
     .trim()
 
-const person =
-    await BorrowLend.find({
-        userId,
-        name: {
-            $regex:
-                cleanName,
-            $options:
-                'i',
-        },
+const person = await BorrowLend.find({
+    userId,
+    name: {
+        $regex: cleanName,
+        $options: 'i',
+    },
+})
+
+const askedSpecificName = cleanName.length > 1
+
+/* NO RECORD FOUND */
+if (
+    askedSpecificName &&
+    person.length === 0 &&
+    msg.includes('lend')
+) {
+    return res.json({
+        reply: `No lend record found for ${cleanName}`,
     })
+}
 
 if (
-    person.length >
-        0 &&
-    (msg.includes(
-        'borrow',
-    ) ||
-        msg.includes(
-            'lend',
-        ))
+    askedSpecificName &&
+    person.length === 0 &&
+    msg.includes('borrow')
 ) {
-    const personBorrow =
-        person
-            .filter(
-                (
-                    x,
-                ) =>
-                    String(
-                        x.type ||
-                            '',
-                    )
-                        .toLowerCase()
-                        .includes(
-                            'borrow',
-                        ),
-            )
-            .reduce(
-                (
-                    a,
-                    b,
-                ) =>
-                    a +
-                    Number(
-                        b.pendingAmount ||
-                            b.amount ||
-                            0,
-                    ),
-                0,
-            )
+    return res.json({
+        reply: `No borrow record found for ${cleanName}`,
+    })
+}
 
-    const personLend =
-        person
-            .filter(
-                (
-                    x,
-                ) =>
-                    String(
-                        x.type ||
-                            '',
-                    )
-                        .toLowerCase()
-                        .includes(
-                            'lend',
-                        ),
-            )
-            .reduce(
-                (
-                    a,
-                    b,
-                ) =>
-                    a +
-                    Number(
-                        b.pendingAmount ||
-                            b.amount ||
-                            0,
-                    ),
-                0,
-            )
-
-    if (
-        msg.includes(
-            'borrow',
+/* RECORD FOUND */
+if (
+    person.length > 0 &&
+    (msg.includes('borrow') ||
+        msg.includes('lend'))
+) {
+    const personBorrow = person
+        .filter((x) =>
+            String(x.type || '')
+                .toLowerCase()
+                .includes('borrow'),
         )
-    ) {
+        .reduce(
+            (a, b) =>
+                a +
+                Number(
+                    b.pendingAmount ||
+                        b.amount ||
+                        0,
+                ),
+            0,
+        )
+
+    const personLend = person
+        .filter((x) =>
+            String(x.type || '')
+                .toLowerCase()
+                .includes('lend'),
+        )
+        .reduce(
+            (a, b) =>
+                a +
+                Number(
+                    b.pendingAmount ||
+                        b.amount ||
+                        0,
+                ),
+            0,
+        )
+
+    if (msg.includes('borrow')) {
         return res.json({
             reply: `Borrow from ${person[0].name}: ₹${personBorrow}`,
         })
     }
 
-    if (
-        msg.includes(
-            'lend',
-        )
-    ) {
+    if (msg.includes('lend')) {
         return res.json({
             reply: `Lend to ${person[0].name}: ₹${personLend}`,
         })

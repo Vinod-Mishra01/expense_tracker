@@ -121,31 +121,51 @@ const yearOptions = [
     ),
 ]
 
-const fetchData =
-    async () => {
-        try {
-            setLoading(
-                true,
-            )
+// const fetchData =
+//     async () => {
+//         try {
+//             setLoading(
+//                 true,
+//             )
 
-            const headers = {
-                Authorization: `Bearer ${authToken}`,
-            }
+//             const headers = {
+//                 Authorization: `Bearer ${authToken}`,
+//             }
 
-            const [
-                expRes,
-                savRes,
-                borRes,
-                salRes,
-            ] =
-                await Promise.all(
-                    [
-                        axios.get(
-                            'https://expense-backend-5myt.onrender.com/api/expense/list',
-                            {
-                                headers,
-                            },
-                        ),
+//             const [
+//                 expRes,
+//                 savRes,
+//                 borRes,
+//                 salRes,
+//             ] =
+//                 await Promise.all(
+//                     [
+//                         axios.get(
+//                             'https://expense-backend-5myt.onrender.com/api/expense/list',
+//                             {
+//                                 headers,
+//                             },
+//                         ),
+
+const fetchData = async () => {
+    try {
+        setLoading(true)
+
+        const headers = {
+            Authorization: `Bearer ${authToken}`,
+        }
+
+        const [
+            expRes,
+            savRes,
+            borRes,
+            salRes,
+        ] = await Promise.all([
+            axios.get(
+                'https://expense-backend-5myt.onrender.com/api/expense/list',
+                { headers },
+            ),
+           
                         axios.get(
                             'https://expense-backend-5myt.onrender.com/api/saving/list',
                             {
