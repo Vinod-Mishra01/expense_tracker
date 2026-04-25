@@ -24,25 +24,15 @@ const months = {
     december: 'December',
 }
 
-const getMonthYear = (
-    text,
-) => {
-    const msg =
-        text.toLowerCase()
+const getMonthYear = (text) => {
+    const msg = text.toLowerCase()
 
     let month = ''
     let year = ''
 
-    Object.keys(
-        months,
-    ).forEach((m) => {
-        if (
-            msg.includes(
-                m,
-            )
-        ) {
-            month =
-                months[m]
+    Object.keys(months).forEach((m) => {
+        if (msg.includes(m)) {
+            month = months[m]
         }
     })
 
@@ -51,9 +41,7 @@ const getMonthYear = (
             /\b20\d{2}\b/,
         )
 
-    if (
-        yearMatch
-    ) {
+    if (yearMatch) {
         year =
             yearMatch[0]
     }
@@ -143,7 +131,7 @@ const askAi = async (
 
         const borrowData =
             await BorrowLend.find(
-                filter,
+                { userId },
             )
 
         const totalExpense =
@@ -229,168 +217,261 @@ const askAi = async (
             totalBorrow +
             totalLend
 
-     /* PERSON SEARCH FIRST */
-/* PERSON SEARCH FIRST */
-const cleanName = message
-    .toLowerCase()
-    .replace(
-        /any|lend|borrow|from|to|pending|show|record|of|for|amount|\?/gi,
-        '',
-    )
-    .trim()
+        /* SMART PERSON SEARCH */
 
-const person = await BorrowLend.find({
-    userId,
-    name: {
-        $regex: cleanName,
-        $options: 'i',
-    },
-})
+        const wantsPersonSearch =
+            /\b(to|from|for|of)\b/i.test(
+                message,
+            )
 
-const askedSpecificName = cleanName.length > 1
+        let cleanName =
+            ''
 
-/* NO RECORD FOUND */
-if (
-    askedSpecificName &&
-    person.length === 0 &&
-    msg.includes('lend')
-) {
-    return res.json({
-        reply: `No lend record found for ${cleanName}`,
-    })
-}
+        if (
+            wantsPersonSearch
+        ) {
+            cleanName =
+                message
+                    .toLowerCase()
+                    .replace(
+                        /any|total|show|pending|lend|borrow|record|amount|to|from|for|of|\?/gi,
+                        '',
+                    )
+                    .trim()
+        }
 
-if (
-    askedSpecificName &&
-    person.length === 0 &&
-    msg.includes('borrow')
-) {
-    return res.json({
-        reply: `No borrow record found for ${cleanName}`,
-    })
-}
+        let person =
+            []
 
-/* RECORD FOUND */
-if (
-    person.length > 0 &&
-    (msg.includes('borrow') ||
-        msg.includes('lend'))
-) {
-    const personBorrow = person
-        .filter((x) =>
-            String(x.type || '')
-                .toLowerCase()
-                .includes('borrow'),
-        )
-        .reduce(
-            (a, b) =>
-                a +
-                Number(
-                    b.pendingAmount ||
-                        b.amount ||
+        if (
+            wantsPersonSearch &&
+            cleanName.length >
+                0
+        ) {
+            person =
+                await BorrowLend.find(
+                    {
+                        userId,
+                        name: {
+                            $regex:
+                                '^' +
+                                cleanName +
+                                '$',
+                            $options:
+                                'i',
+                        },
+                    },
+                )
+        }
+
+        /* PERSON NO RECORD */
+
+        if (
+            wantsPersonSearch &&
+            cleanName &&
+            person.length ===
+                0 &&
+            msg.includes(
+                'lend',
+            )
+        ) {
+            return res.json(
+                {
+                    reply: `No lend record found for ${cleanName}`,
+                },
+            )
+        }
+
+        if (
+            wantsPersonSearch &&
+            cleanName &&
+            person.length ===
+                0 &&
+            msg.includes(
+                'borrow',
+            )
+        ) {
+            return res.json(
+                {
+                    reply: `No borrow record found for ${cleanName}`,
+                },
+            )
+        }
+
+        /* PERSON FOUND */
+
+        if (
+            person.length >
+                0 &&
+            msg.includes(
+                'lend',
+            )
+        ) {
+            const personLend =
+                person
+                    .filter(
+                        (
+                            x,
+                        ) =>
+                            String(
+                                x.type ||
+                                    '',
+                            )
+                                .toLowerCase()
+                                .includes(
+                                    'lend',
+                                ),
+                    )
+                    .reduce(
+                        (
+                            a,
+                            b,
+                        ) =>
+                            a +
+                            Number(
+                                b.pendingAmount ||
+                                    b.amount ||
+                                    0,
+                            ),
                         0,
-                ),
-            0,
-        )
+                    )
 
-    const personLend = person
-        .filter((x) =>
-            String(x.type || '')
-                .toLowerCase()
-                .includes('lend'),
-        )
-        .reduce(
-            (a, b) =>
-                a +
-                Number(
-                    b.pendingAmount ||
-                        b.amount ||
+            return res.json(
+                {
+                    reply: `Lend to ${person[0].name}: ₹${personLend}`,
+                },
+            )
+        }
+
+        if (
+            person.length >
+                0 &&
+            msg.includes(
+                'borrow',
+            )
+        ) {
+            const personBorrow =
+                person
+                    .filter(
+                        (
+                            x,
+                        ) =>
+                            String(
+                                x.type ||
+                                    '',
+                            )
+                                .toLowerCase()
+                                .includes(
+                                    'borrow',
+                                ),
+                    )
+                    .reduce(
+                        (
+                            a,
+                            b,
+                        ) =>
+                            a +
+                            Number(
+                                b.pendingAmount ||
+                                    b.amount ||
+                                    0,
+                            ),
                         0,
-                ),
-            0,
-        )
+                    )
 
-    if (msg.includes('borrow')) {
-        return res.json({
-            reply: `Borrow from ${person[0].name}: ₹${personBorrow}`,
-        })
-    }
+            return res.json(
+                {
+                    reply: `Borrow from ${person[0].name}: ₹${personBorrow}`,
+                },
+            )
+        }
 
-    if (msg.includes('lend')) {
-        return res.json({
-            reply: `Lend to ${person[0].name}: ₹${personLend}`,
-        })
-    }
-}
+        /* BALANCE */
 
-/* BALANCE */
-if (
-    msg.includes(
-        'balance',
-    )
-) {
-    return res.json({
-        reply: `Your Balance: ₹${balance}`,
-    })
-}
+        if (
+            msg.includes(
+                'balance',
+            )
+        ) {
+            return res.json(
+                {
+                    reply: `Your Balance: ₹${balance}`,
+                },
+            )
+        }
 
-/* EXPENSE */
-if (
-    msg.includes(
-        'expense',
-    )
-) {
-    return res.json({
-        reply: `Your Expense: ₹${totalExpense}`,
-    })
-}
+        /* EXPENSE */
 
-/* SAVING */
-if (
-    msg.includes(
-        'saving',
-    )
-) {
-    return res.json({
-        reply: `Your Saving: ₹${totalSaving}`,
-    })
-}
+        if (
+            msg.includes(
+                'expense',
+            )
+        ) {
+            return res.json(
+                {
+                    reply: `Your Expense: ₹${totalExpense}`,
+                },
+            )
+        }
 
-/* SALARY */
-if (
-    msg.includes(
-        'salary',
-    )
-) {
-    return res.json({
-        reply: `Your Salary: ₹${totalSalary}`,
-    })
-}
+        /* SAVING */
 
-/* ONLY BORROW */
-if (
-    msg.includes(
-        'borrow',
-    )
-) {
-    return res.json({
-        reply: `Total Borrow Pending: ₹${totalBorrow}`,
-    })
-}
+        if (
+            msg.includes(
+                'saving',
+            )
+        ) {
+            return res.json(
+                {
+                    reply: `Your Saving: ₹${totalSaving}`,
+                },
+            )
+        }
 
-/* ONLY LEND */
-if (
-    msg.includes(
-        'lend',
-    )
-) {
-    return res.json({
-        reply: `Total Lend Pending: ₹${totalLend}`,
-    })
-}
-        
+        /* SALARY */
+
+        if (
+            msg.includes(
+                'salary',
+            )
+        ) {
+            return res.json(
+                {
+                    reply: `Your Salary: ₹${totalSalary}`,
+                },
+            )
+        }
+
+        /* TOTAL BORROW */
+
+        if (
+            msg.includes(
+                'borrow',
+            )
+        ) {
+            return res.json(
+                {
+                    reply: `Total Borrow Pending: ₹${totalBorrow}`,
+                },
+            )
+        }
+
+        /* TOTAL LEND */
+
+        if (
+            msg.includes(
+                'lend',
+            )
+        ) {
+            return res.json(
+                {
+                    reply: `Total Lend Pending: ₹${totalLend}`,
+                },
+            )
+        }
 
         /* GENERAL AI */
+
         const prompt = `
 You are finance assistant.
 
