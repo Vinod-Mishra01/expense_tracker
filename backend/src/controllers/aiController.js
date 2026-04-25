@@ -9,7 +9,7 @@ const groq = new Groq({
     apiKey: process.env.GROQ_API_KEY,
 })
 
-const monthMap = {
+const months = {
     january: 'January',
     february: 'February',
     march: 'March',
@@ -24,23 +24,38 @@ const monthMap = {
     december: 'December',
 }
 
-const getMonthYear = (msg) => {
-    const text = msg.toLowerCase()
+const getMonthYear = (
+    text,
+) => {
+    const msg =
+        text.toLowerCase()
 
     let month = ''
     let year = ''
 
-    Object.keys(monthMap).forEach((m) => {
-        if (text.includes(m)) {
-            month = monthMap[m]
+    Object.keys(
+        months,
+    ).forEach((m) => {
+        if (
+            msg.includes(
+                m,
+            )
+        ) {
+            month =
+                months[m]
         }
     })
 
     const yearMatch =
-        text.match(/\b20\d{2}\b/)
+        msg.match(
+            /\b20\d{2}\b/,
+        )
 
-    if (yearMatch) {
-        year = yearMatch[0]
+    if (
+        yearMatch
+    ) {
+        year =
+            yearMatch[0]
     }
 
     return {
@@ -49,26 +64,33 @@ const getMonthYear = (msg) => {
     }
 }
 
-const sumAmount = (
+const sum = (
     arr,
     field,
-) => {
-    return arr.reduce(
-        (a, b) =>
+) =>
+    arr.reduce(
+        (
+            a,
+            b,
+        ) =>
             a +
             Number(
-                b[field] || 0,
+                b[
+                    field
+                ] ||
+                    0,
             ),
         0,
     )
-}
 
 const askAi = async (
     req,
     res,
 ) => {
     try {
-        const { message } =
+        const {
+            message,
+        } =
             req.body
 
         const userId =
@@ -80,141 +102,136 @@ const askAi = async (
         const {
             month,
             year,
-        } = getMonthYear(
-            message,
-        )
+        } =
+            getMonthYear(
+                message,
+            )
 
-        const commonFilter = {
-            userId,
-        }
+        const filter =
+            {
+                userId,
+            }
 
-        if (month) {
-            commonFilter.month =
+        if (
+            month
+        ) {
+            filter.month =
                 month
         }
 
-        if (year) {
-            commonFilter.year =
+        if (
+            year
+        ) {
+            filter.year =
                 year
         }
 
         const expenses =
             await Expense.find(
-                commonFilter,
+                filter,
             )
 
         const savings =
             await Saving.find(
-                commonFilter,
+                filter,
             )
 
         const salaries =
             await Salary.find(
-                commonFilter,
+                filter,
             )
 
-        const borrows =
+        const borrowData =
             await BorrowLend.find(
-                commonFilter,
+                filter,
             )
 
         const totalExpense =
-            sumAmount(
+            sum(
                 expenses,
                 'amount',
             )
 
         const totalSaving =
-            sumAmount(
+            sum(
                 savings,
                 'amount',
             )
 
         const totalSalary =
-            sumAmount(
+            sum(
                 salaries,
                 'netSalary',
             )
 
-        const totalPending =
-            borrows.reduce(
-                (a, b) =>
-                    a +
-                    Number(
-                        b.pendingAmount ||
-                            b.amount ||
-                            0,
-                    ),
-                0,
-            )
+        const totalBorrow =
+            borrowData
+                .filter(
+                    (
+                        x,
+                    ) =>
+                        String(
+                            x.type ||
+                                '',
+                        )
+                            .toLowerCase()
+                            .includes(
+                                'borrow',
+                            ),
+                )
+                .reduce(
+                    (
+                        a,
+                        b,
+                    ) =>
+                        a +
+                        Number(
+                            b.pendingAmount ||
+                                b.amount ||
+                                0,
+                        ),
+                    0,
+                )
+
+        const totalLend =
+            borrowData
+                .filter(
+                    (
+                        x,
+                    ) =>
+                        String(
+                            x.type ||
+                                '',
+                        )
+                            .toLowerCase()
+                            .includes(
+                                'lend',
+                            ),
+                )
+                .reduce(
+                    (
+                        a,
+                        b,
+                    ) =>
+                        a +
+                        Number(
+                            b.pendingAmount ||
+                                b.amount ||
+                                0,
+                        ),
+                    0,
+                )
 
         const balance =
             totalSalary +
             totalSaving -
             totalExpense -
-            totalPending
+            totalBorrow +
+            totalLend
 
-        /* BALANCE */
-        if (
-            msg.includes(
-                'balance',
-            )
-        ) {
-            return res.json({
-                reply: `Your Balance: ₹${balance}`,
-            })
-        }
-
-        /* EXPENSE */
-        if (
-            msg.includes(
-                'expense',
-            )
-        ) {
-            return res.json({
-                reply: `Your Total Expense: ₹${totalExpense}`,
-            })
-        }
-
-        /* SAVING */
-        if (
-            msg.includes(
-                'saving',
-            )
-        ) {
-            return res.json({
-                reply: `Your Total Saving: ₹${totalSaving}`,
-            })
-        }
-
-        /* SALARY */
-        if (
-            msg.includes(
-                'salary',
-            )
-        ) {
-            return res.json({
-                reply: `Your Total Salary: ₹${totalSalary}`,
-            })
-        }
-
-        /* BORROW */
-        if (
-            msg.includes(
-                'borrow',
-            ) ||
-            msg.includes(
-                'lend',
-            )
-        ) {
-            return res.json({
-                reply: `Pending Borrow/Lend: ₹${totalPending}`,
-            })
-        }
-
-        /* NAME SEARCH */
+        /* PERSON SEARCH FIRST */
         const person =
-            await BorrowLend.findOne(
+            await BorrowLend.find(
                 {
                     userId,
                     name: {
@@ -226,22 +243,187 @@ const askAi = async (
                 },
             )
 
-        if (person) {
-            return res.json({
-                reply: `${person.name} related record found. Amount ₹${person.amount}`,
-            })
+        if (
+            person.length >
+                0 &&
+            (msg.includes(
+                'borrow',
+            ) ||
+                msg.includes(
+                    'lend',
+                ))
+        ) {
+            const personBorrow =
+                person
+                    .filter(
+                        (
+                            x,
+                        ) =>
+                            String(
+                                x.type ||
+                                    '',
+                            )
+                                .toLowerCase()
+                                .includes(
+                                    'borrow',
+                                ),
+                    )
+                    .reduce(
+                        (
+                            a,
+                            b,
+                        ) =>
+                            a +
+                            Number(
+                                b.pendingAmount ||
+                                    b.amount ||
+                                    0,
+                            ),
+                        0,
+                    )
+
+            const personLend =
+                person
+                    .filter(
+                        (
+                            x,
+                        ) =>
+                            String(
+                                x.type ||
+                                    '',
+                            )
+                                .toLowerCase()
+                                .includes(
+                                    'lend',
+                                ),
+                    )
+                    .reduce(
+                        (
+                            a,
+                            b,
+                        ) =>
+                            a +
+                            Number(
+                                b.pendingAmount ||
+                                    b.amount ||
+                                    0,
+                            ),
+                        0,
+                    )
+
+            if (
+                msg.includes(
+                    'borrow',
+                )
+            ) {
+                return res.json(
+                    {
+                        reply: `Borrow from ${person[0].name}: ₹${personBorrow}`,
+                    },
+                )
+            }
+
+            if (
+                msg.includes(
+                    'lend',
+                )
+            ) {
+                return res.json(
+                    {
+                        reply: `Lend to ${person[0].name}: ₹${personLend}`,
+                    },
+                )
+            }
         }
 
-        /* FALLBACK AI */
+        /* BALANCE */
+        if (
+            msg.includes(
+                'balance',
+            )
+        ) {
+            return res.json(
+                {
+                    reply: `Your Balance: ₹${balance}`,
+                },
+            )
+        }
+
+        /* EXPENSE */
+        if (
+            msg.includes(
+                'expense',
+            )
+        ) {
+            return res.json(
+                {
+                    reply: `Your Expense: ₹${totalExpense}`,
+                },
+            )
+        }
+
+        /* SAVING */
+        if (
+            msg.includes(
+                'saving',
+            )
+        ) {
+            return res.json(
+                {
+                    reply: `Your Saving: ₹${totalSaving}`,
+                },
+            )
+        }
+
+        /* SALARY */
+        if (
+            msg.includes(
+                'salary',
+            )
+        ) {
+            return res.json(
+                {
+                    reply: `Your Salary: ₹${totalSalary}`,
+                },
+            )
+        }
+
+        /* ONLY BORROW */
+        if (
+            msg.includes(
+                'borrow',
+            )
+        ) {
+            return res.json(
+                {
+                    reply: `Total Borrow Pending: ₹${totalBorrow}`,
+                },
+            )
+        }
+
+        /* ONLY LEND */
+        if (
+            msg.includes(
+                'lend',
+            )
+        ) {
+            return res.json(
+                {
+                    reply: `Total Lend Pending: ₹${totalLend}`,
+                },
+            )
+        }
+
+        /* GENERAL AI */
         const prompt = `
 You are finance assistant.
 
-User Data:
-Salary ₹${totalSalary}
+Balance ₹${balance}
 Expense ₹${totalExpense}
 Saving ₹${totalSaving}
-Pending ₹${totalPending}
-Balance ₹${balance}
+Salary ₹${totalSalary}
+Borrow ₹${totalBorrow}
+Lend ₹${totalLend}
 
 Question:
 ${message}
@@ -265,7 +447,8 @@ Reply short and useful.
             )
 
         const reply =
-            chat?.choices?.[0]
+            chat
+                ?.choices?.[0]
                 ?.message
                 ?.content ||
             'No reply'
@@ -273,12 +456,16 @@ Reply short and useful.
         res.json({
             reply,
         })
-    } catch (error) {
+    } catch (
+        error
+    ) {
         console.log(
             error,
         )
 
-        res.status(500).json({
+        res.status(
+            500,
+        ).json({
             reply:
                 'AI reply failed',
         })
