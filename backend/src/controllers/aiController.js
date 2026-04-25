@@ -229,190 +229,181 @@ const askAi = async (
             totalBorrow +
             totalLend
 
-        /* PERSON SEARCH FIRST */
-        const person =
-            await BorrowLend.find(
-                {
-                    userId,
-                    name: {
-                        $regex:
-                            message,
-                        $options:
-                            'i',
-                    },
-                },
-            )
+     /* PERSON SEARCH FIRST */
+const cleanName = message
+    .toLowerCase()
+    .replace(
+        /any|lend|borrow|from|to|pending|show|record|of|for|amount|\?/gi,
+        '',
+    )
+    .trim()
 
-        if (
-            person.length >
-                0 &&
-            (msg.includes(
-                'borrow',
-            ) ||
-                msg.includes(
-                    'lend',
-                ))
-        ) {
-            const personBorrow =
-                person
-                    .filter(
-                        (
-                            x,
-                        ) =>
-                            String(
-                                x.type ||
-                                    '',
-                            )
-                                .toLowerCase()
-                                .includes(
-                                    'borrow',
-                                ),
+const person =
+    await BorrowLend.find({
+        userId,
+        name: {
+            $regex:
+                cleanName,
+            $options:
+                'i',
+        },
+    })
+
+if (
+    person.length >
+        0 &&
+    (msg.includes(
+        'borrow',
+    ) ||
+        msg.includes(
+            'lend',
+        ))
+) {
+    const personBorrow =
+        person
+            .filter(
+                (
+                    x,
+                ) =>
+                    String(
+                        x.type ||
+                            '',
                     )
-                    .reduce(
-                        (
-                            a,
-                            b,
-                        ) =>
-                            a +
-                            Number(
-                                b.pendingAmount ||
-                                    b.amount ||
-                                    0,
-                            ),
-                        0,
+                        .toLowerCase()
+                        .includes(
+                            'borrow',
+                        ),
+            )
+            .reduce(
+                (
+                    a,
+                    b,
+                ) =>
+                    a +
+                    Number(
+                        b.pendingAmount ||
+                            b.amount ||
+                            0,
+                    ),
+                0,
+            )
+
+    const personLend =
+        person
+            .filter(
+                (
+                    x,
+                ) =>
+                    String(
+                        x.type ||
+                            '',
                     )
+                        .toLowerCase()
+                        .includes(
+                            'lend',
+                        ),
+            )
+            .reduce(
+                (
+                    a,
+                    b,
+                ) =>
+                    a +
+                    Number(
+                        b.pendingAmount ||
+                            b.amount ||
+                            0,
+                    ),
+                0,
+            )
 
-            const personLend =
-                person
-                    .filter(
-                        (
-                            x,
-                        ) =>
-                            String(
-                                x.type ||
-                                    '',
-                            )
-                                .toLowerCase()
-                                .includes(
-                                    'lend',
-                                ),
-                    )
-                    .reduce(
-                        (
-                            a,
-                            b,
-                        ) =>
-                            a +
-                            Number(
-                                b.pendingAmount ||
-                                    b.amount ||
-                                    0,
-                            ),
-                        0,
-                    )
+    if (
+        msg.includes(
+            'borrow',
+        )
+    ) {
+        return res.json({
+            reply: `Borrow from ${person[0].name}: ₹${personBorrow}`,
+        })
+    }
 
-            if (
-                msg.includes(
-                    'borrow',
-                )
-            ) {
-                return res.json(
-                    {
-                        reply: `Borrow from ${person[0].name}: ₹${personBorrow}`,
-                    },
-                )
-            }
+    if (
+        msg.includes(
+            'lend',
+        )
+    ) {
+        return res.json({
+            reply: `Lend to ${person[0].name}: ₹${personLend}`,
+        })
+    }
+}
 
-            if (
-                msg.includes(
-                    'lend',
-                )
-            ) {
-                return res.json(
-                    {
-                        reply: `Lend to ${person[0].name}: ₹${personLend}`,
-                    },
-                )
-            }
-        }
+/* BALANCE */
+if (
+    msg.includes(
+        'balance',
+    )
+) {
+    return res.json({
+        reply: `Your Balance: ₹${balance}`,
+    })
+}
 
-        /* BALANCE */
-        if (
-            msg.includes(
-                'balance',
-            )
-        ) {
-            return res.json(
-                {
-                    reply: `Your Balance: ₹${balance}`,
-                },
-            )
-        }
+/* EXPENSE */
+if (
+    msg.includes(
+        'expense',
+    )
+) {
+    return res.json({
+        reply: `Your Expense: ₹${totalExpense}`,
+    })
+}
 
-        /* EXPENSE */
-        if (
-            msg.includes(
-                'expense',
-            )
-        ) {
-            return res.json(
-                {
-                    reply: `Your Expense: ₹${totalExpense}`,
-                },
-            )
-        }
+/* SAVING */
+if (
+    msg.includes(
+        'saving',
+    )
+) {
+    return res.json({
+        reply: `Your Saving: ₹${totalSaving}`,
+    })
+}
 
-        /* SAVING */
-        if (
-            msg.includes(
-                'saving',
-            )
-        ) {
-            return res.json(
-                {
-                    reply: `Your Saving: ₹${totalSaving}`,
-                },
-            )
-        }
+/* SALARY */
+if (
+    msg.includes(
+        'salary',
+    )
+) {
+    return res.json({
+        reply: `Your Salary: ₹${totalSalary}`,
+    })
+}
 
-        /* SALARY */
-        if (
-            msg.includes(
-                'salary',
-            )
-        ) {
-            return res.json(
-                {
-                    reply: `Your Salary: ₹${totalSalary}`,
-                },
-            )
-        }
+/* ONLY BORROW */
+if (
+    msg.includes(
+        'borrow',
+    )
+) {
+    return res.json({
+        reply: `Total Borrow Pending: ₹${totalBorrow}`,
+    })
+}
 
-        /* ONLY BORROW */
-        if (
-            msg.includes(
-                'borrow',
-            )
-        ) {
-            return res.json(
-                {
-                    reply: `Total Borrow Pending: ₹${totalBorrow}`,
-                },
-            )
-        }
-
-        /* ONLY LEND */
-        if (
-            msg.includes(
-                'lend',
-            )
-        ) {
-            return res.json(
-                {
-                    reply: `Total Lend Pending: ₹${totalLend}`,
-                },
-            )
-        }
+/* ONLY LEND */
+if (
+    msg.includes(
+        'lend',
+    )
+) {
+    return res.json({
+        reply: `Total Lend Pending: ₹${totalLend}`,
+    })
+}
+        
 
         /* GENERAL AI */
         const prompt = `
