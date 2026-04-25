@@ -9,96 +9,282 @@ const groq = new Groq({
     apiKey: process.env.GROQ_API_KEY,
 })
 
-const askAi = async (req, res) => {
+const monthMap = {
+    january: 'January',
+    february: 'February',
+    march: 'March',
+    april: 'April',
+    may: 'May',
+    june: 'June',
+    july: 'July',
+    august: 'August',
+    september: 'September',
+    october: 'October',
+    november: 'November',
+    december: 'December',
+}
+
+const getMonthYear = (msg) => {
+    const text = msg.toLowerCase()
+
+    let month = ''
+    let year = ''
+
+    Object.keys(monthMap).forEach((m) => {
+        if (text.includes(m)) {
+            month = monthMap[m]
+        }
+    })
+
+    const yearMatch =
+        text.match(/\b20\d{2}\b/)
+
+    if (yearMatch) {
+        year = yearMatch[0]
+    }
+
+    return {
+        month,
+        year,
+    }
+}
+
+const sumAmount = (
+    arr,
+    field,
+) => {
+    return arr.reduce(
+        (a, b) =>
+            a +
+            Number(
+                b[field] || 0,
+            ),
+        0,
+    )
+}
+
+const askAi = async (
+    req,
+    res,
+) => {
     try {
-        console.log(
-            process.env.GROQ_API_KEY
-                ? 'GROQ KEY OK'
-                : 'NO GROQ KEY',
+        const { message } =
+            req.body
+
+        const userId =
+            req.user.id
+
+        const msg =
+            message.toLowerCase()
+
+        const {
+            month,
+            year,
+        } = getMonthYear(
+            message,
         )
 
-        const { message } = req.body
-        const userId = req.user.id
+        const commonFilter = {
+            userId,
+        }
 
-        const expenses = await Expense.find({ userId })
-        const savings = await Saving.find({ userId })
-        const salaries = await Salary.find({ userId })
-        const borrow = await BorrowLend.find({ userId })
+        if (month) {
+            commonFilter.month =
+                month
+        }
 
-        const totalExpense = expenses.reduce(
-            (a, b) => a + Number(b.amount || 0),
-            0,
-        )
+        if (year) {
+            commonFilter.year =
+                year
+        }
 
-        const totalSaving = savings.reduce(
-            (a, b) => a + Number(b.amount || 0),
-            0,
-        )
+        const expenses =
+            await Expense.find(
+                commonFilter,
+            )
 
-        const totalSalary = salaries.reduce(
-            (a, b) => a + Number(b.netSalary || 0),
-            0,
-        )
+        const savings =
+            await Saving.find(
+                commonFilter,
+            )
 
-        const pendingBorrow = borrow.reduce(
-            (a, b) =>
-                a +
-                Number(
-                    b.pendingAmount ||
-                        b.amount ||
-                        0,
-                ),
-            0,
-        )
+        const salaries =
+            await Salary.find(
+                commonFilter,
+            )
+
+        const borrows =
+            await BorrowLend.find(
+                commonFilter,
+            )
+
+        const totalExpense =
+            sumAmount(
+                expenses,
+                'amount',
+            )
+
+        const totalSaving =
+            sumAmount(
+                savings,
+                'amount',
+            )
+
+        const totalSalary =
+            sumAmount(
+                salaries,
+                'netSalary',
+            )
+
+        const totalPending =
+            borrows.reduce(
+                (a, b) =>
+                    a +
+                    Number(
+                        b.pendingAmount ||
+                            b.amount ||
+                            0,
+                    ),
+                0,
+            )
 
         const balance =
             totalSalary +
             totalSaving -
             totalExpense -
-            pendingBorrow
+            totalPending
 
+        /* BALANCE */
+        if (
+            msg.includes(
+                'balance',
+            )
+        ) {
+            return res.json({
+                reply: `Your Balance: ₹${balance}`,
+            })
+        }
+
+        /* EXPENSE */
+        if (
+            msg.includes(
+                'expense',
+            )
+        ) {
+            return res.json({
+                reply: `Your Total Expense: ₹${totalExpense}`,
+            })
+        }
+
+        /* SAVING */
+        if (
+            msg.includes(
+                'saving',
+            )
+        ) {
+            return res.json({
+                reply: `Your Total Saving: ₹${totalSaving}`,
+            })
+        }
+
+        /* SALARY */
+        if (
+            msg.includes(
+                'salary',
+            )
+        ) {
+            return res.json({
+                reply: `Your Total Salary: ₹${totalSalary}`,
+            })
+        }
+
+        /* BORROW */
+        if (
+            msg.includes(
+                'borrow',
+            ) ||
+            msg.includes(
+                'lend',
+            )
+        ) {
+            return res.json({
+                reply: `Pending Borrow/Lend: ₹${totalPending}`,
+            })
+        }
+
+        /* NAME SEARCH */
+        const person =
+            await BorrowLend.findOne(
+                {
+                    userId,
+                    name: {
+                        $regex:
+                            message,
+                        $options:
+                            'i',
+                    },
+                },
+            )
+
+        if (person) {
+            return res.json({
+                reply: `${person.name} related record found. Amount ₹${person.amount}`,
+            })
+        }
+
+        /* FALLBACK AI */
         const prompt = `
-You are a smart finance assistant.
+You are finance assistant.
 
-Salary: ₹${totalSalary}
-Expense: ₹${totalExpense}
-Savings: ₹${totalSaving}
-Borrow Pending: ₹${pendingBorrow}
-Balance: ₹${balance}
+User Data:
+Salary ₹${totalSalary}
+Expense ₹${totalExpense}
+Saving ₹${totalSaving}
+Pending ₹${totalPending}
+Balance ₹${balance}
 
 Question:
 ${message}
 
-Reply short and clear.
+Reply short and useful.
 `
 
         const chat =
-            await groq.chat.completions.create({
-                model: 'llama-3.1-8b-instant',
-                messages: [
-                    {
-                        role: 'user',
-                        content: prompt,
-                    },
-                ],
-                temperature: 0.7,
-            })
+            await groq.chat.completions.create(
+                {
+                    model:
+                        'llama-3.1-8b-instant',
+                    messages: [
+                        {
+                            role: 'user',
+                            content:
+                                prompt,
+                        },
+                    ],
+                },
+            )
 
         const reply =
             chat?.choices?.[0]
-                ?.message?.content ||
-            'No reply found'
+                ?.message
+                ?.content ||
+            'No reply'
 
-        res.json({ reply })
+        res.json({
+            reply,
+        })
     } catch (error) {
-        console.log('AI ERROR:', error)
+        console.log(
+            error,
+        )
 
         res.status(500).json({
             reply:
-                error.message ||
                 'AI reply failed',
         })
     }
 }
 
-module.exports = { askAi }
+module.exports = {
+    askAi,
+}
