@@ -3,6 +3,7 @@ import Button from '@/components/ui/Button'
 import Upload from '@/components/ui/Upload'
 import Input from '@/components/ui/Input'
 import Avatar from '@/components/ui/Avatar'
+import Card from '@/components/ui/Card'
 import { Form, FormItem } from '@/components/ui/Form'
 import { useForm, Controller } from 'react-hook-form'
 import { HiOutlineUser } from 'react-icons/hi'
@@ -51,18 +52,18 @@ const SettingsProfile =
 
         useEffect(() => {
             if (data) {
+                const names =
+                    data.name
+                        ?.split(
+                            ' ',
+                        ) || []
+
                 reset({
                     firstName:
-                        data.name
-                            ?.split(
-                                ' ',
-                            )[0] ||
+                        names[0] ||
                         '',
                     lastName:
-                        data.name
-                            ?.split(
-                                ' ',
-                            )[1] ||
+                        names[1] ||
                         '',
                     email:
                         data.email ||
@@ -127,21 +128,30 @@ const SettingsProfile =
                     res.data,
                     false,
                 )
+
+                alert(
+                    'Profile updated successfully',
+                )
             }
 
         return (
-            <>
-                <h4 className="mb-8">
-                    Personal
-                    Information
-                </h4>
+            <Card className="p-6">
+                <div className="mb-8">
+                    <h4 className="mb-1">
+                        Personal Information
+                    </h4>
+
+                    <p className="text-gray-500">
+                        Update your account details
+                    </p>
+                </div>
 
                 <Form
                     onSubmit={handleSubmit(
                         onSubmit,
                     )}
                 >
-                    <div className="mb-8">
+                    <div className="mb-8 flex flex-col md:flex-row md:items-center gap-5 border-b pb-6">
                         <Controller
                             name="img"
                             control={
@@ -150,17 +160,17 @@ const SettingsProfile =
                             render={({
                                 field,
                             }) => (
-                                <div className="flex items-center gap-4">
+                                <>
                                     <Avatar
                                         size={
                                             90
                                         }
-                                        className="border-4 border-white bg-gray-100 text-gray-300 shadow-lg"
-                                        icon={
-                                            <HiOutlineUser />
-                                        }
+                                        className="border-4 border-white shadow-md bg-gray-100 text-gray-400"
                                         src={
                                             field.value
+                                        }
+                                        icon={
+                                            <HiOutlineUser />
                                         }
                                     />
 
@@ -188,9 +198,9 @@ const SettingsProfile =
                                             }}
                                         >
                                             <Button
-                                                variant="solid"
                                                 size="sm"
                                                 type="button"
+                                                variant="solid"
                                                 icon={
                                                     <TbPlus />
                                                 }
@@ -211,7 +221,7 @@ const SettingsProfile =
                                             Remove
                                         </Button>
                                     </div>
-                                </div>
+                                </>
                             )}
                         />
                     </div>
@@ -228,6 +238,7 @@ const SettingsProfile =
                                 }) => (
                                     <Input
                                         {...field}
+                                        size="lg"
                                     />
                                 )}
                             />
@@ -244,59 +255,80 @@ const SettingsProfile =
                                 }) => (
                                     <Input
                                         {...field}
+                                        size="lg"
+                                    />
+                                )}
+                            />
+                        </FormItem>
+
+                        <FormItem label="Email">
+                            <Controller
+                                name="email"
+                                control={
+                                    control
+                                }
+                                render={({
+                                    field,
+                                }) => (
+                                    <Input
+                                        {...field}
+                                        size="lg"
+                                    />
+                                )}
+                            />
+                        </FormItem>
+
+                        <FormItem label="Phone">
+                            <Controller
+                                name="phoneNumber"
+                                control={
+                                    control
+                                }
+                                render={({
+                                    field,
+                                }) => (
+                                    <Input
+                                        {...field}
+                                        size="lg"
+                                    />
+                                )}
+                            />
+                        </FormItem>
+
+                        <FormItem label="Country">
+                            <Controller
+                                name="country"
+                                control={
+                                    control
+                                }
+                                render={({
+                                    field,
+                                }) => (
+                                    <Input
+                                        {...field}
+                                        size="lg"
+                                    />
+                                )}
+                            />
+                        </FormItem>
+
+                        <FormItem label="City">
+                            <Controller
+                                name="city"
+                                control={
+                                    control
+                                }
+                                render={({
+                                    field,
+                                }) => (
+                                    <Input
+                                        {...field}
+                                        size="lg"
                                     />
                                 )}
                             />
                         </FormItem>
                     </div>
-
-                    <FormItem label="Email">
-                        <Controller
-                            name="email"
-                            control={
-                                control
-                            }
-                            render={({
-                                field,
-                            }) => (
-                                <Input
-                                    {...field}
-                                />
-                            )}
-                        />
-                    </FormItem>
-
-                    <FormItem label="Phone">
-                        <Controller
-                            name="phoneNumber"
-                            control={
-                                control
-                            }
-                            render={({
-                                field,
-                            }) => (
-                                <Input
-                                    {...field}
-                                />
-                            )}
-                        />
-                    </FormItem>
-
-                    <FormItem label="Country">
-                        <Controller
-                            name="country"
-                            control={
-                                control
-                            }
-                            render={({
-                                field,
-                            }) => (
-                                <Input
-                                    {...field}
-                                />
-                            )}
-                        />
-                    </FormItem>
 
                     <FormItem label="Address">
                         <Controller
@@ -309,58 +341,42 @@ const SettingsProfile =
                             }) => (
                                 <Input
                                     {...field}
+                                    size="lg"
                                 />
                             )}
                         />
                     </FormItem>
 
-                    <div className="grid md:grid-cols-2 gap-4">
-                        <FormItem label="City">
-                            <Controller
-                                name="city"
-                                control={
-                                    control
-                                }
-                                render={({
-                                    field,
-                                }) => (
-                                    <Input
-                                        {...field}
-                                    />
-                                )}
-                            />
-                        </FormItem>
+                    <FormItem label="Postcode">
+                        <Controller
+                            name="postcode"
+                            control={
+                                control
+                            }
+                            render={({
+                                field,
+                            }) => (
+                                <Input
+                                    {...field}
+                                    size="lg"
+                                />
+                            )}
+                        />
+                    </FormItem>
 
-                        <FormItem label="Postcode">
-                            <Controller
-                                name="postcode"
-                                control={
-                                    control
-                                }
-                                render={({
-                                    field,
-                                }) => (
-                                    <Input
-                                        {...field}
-                                    />
-                                )}
-                            />
-                        </FormItem>
-                    </div>
-
-                    <div className="flex justify-end mt-4">
+                    <div className="flex justify-end mt-6">
                         <Button
-                            variant="solid"
                             type="submit"
+                            variant="solid"
                             loading={
                                 isSubmitting
                             }
                         >
-                            Save
+                            Save Changes
                         </Button>
                     </div>
                 </Form>
-            </>
+            </Card>
         )
     }
 
