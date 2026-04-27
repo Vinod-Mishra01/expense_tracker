@@ -1,189 +1,187 @@
 import { useState } from 'react'
-import axios from 'axios'
+import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import { Form, FormItem } from '@/components/ui/Form'
+import { changePassword } from '@/services/ProfileService'
 
-const SettingsSecurity = () => {
-    const [form, setForm] =
-        useState({
-            currentPassword:
-                '',
-            newPassword:
-                '',
-            confirmPassword:
-                '',
-        })
+const SettingsSecurity =
+    () => {
+        const [
+            form,
+            setForm,
+        ] =
+            useState({
+                currentPassword:
+                    '',
+                newPassword:
+                    '',
+                confirmPassword:
+                    '',
+            })
 
-    const [loading, setLoading] =
-        useState(false)
+        const [
+            loading,
+            setLoading,
+        ] =
+            useState(false)
 
-    const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement>,
-    ) => {
-        setForm({
-            ...form,
-            [e.target.name]:
-                e.target.value,
-        })
-    }
-
-    const handleSubmit =
-        async (
-            e: React.FormEvent,
+        const handleChange = (
+            e: React.ChangeEvent<HTMLInputElement>,
         ) => {
-            e.preventDefault()
-
-            if (
-                form.newPassword !==
-                form.confirmPassword
-            ) {
-                alert(
-                    'Password not match',
-                )
-                return
-            }
-
-            try {
-                setLoading(
-                    true,
-                )
-
-                const sessionData =
-                    localStorage.getItem(
-                        'sessionUser',
-                    )
-
-                let token = ''
-
-                if (
-                    sessionData
-                ) {
-                    const parsed =
-                        JSON.parse(
-                            sessionData,
-                        )
-
-                    token =
-                        parsed
-                            ?.state
-                            ?.user
-                            ?.token ||
-                        ''
-                }
-
-                const res =
-                    await axios.put(
-                        'https://expense-backend-5myt.onrender.com/api/auth/change-password',
-                        {
-                            currentPassword:
-                                form.currentPassword,
-                            newPassword:
-                                form.newPassword,
-                        },
-                        {
-                            headers:
-                                {
-                                    Authorization: `Bearer ${token}`,
-                                },
-                        },
-                    )
-
-                alert(
-                    res.data
-                        .message ||
-                        'Password updated successfully',
-                )
-
-                setForm({
-                    currentPassword:
-                        '',
-                    newPassword:
-                        '',
-                    confirmPassword:
-                        '',
-                })
-            } catch (
-                error: any
-            ) {
-                alert(
-                    error
-                        ?.response
-                        ?.data
-                        ?.message ||
-                        'Password change failed',
-                )
-            } finally {
-                setLoading(
-                    false,
-                )
-            }
+            setForm({
+                ...form,
+                [e.target.name]:
+                    e.target.value,
+            })
         }
 
-    return (
-        <div>
-            <h4 className="mb-6">
-                Security
-            </h4>
+        const handleSubmit =
+            async (
+                e: React.FormEvent,
+            ) => {
+                e.preventDefault()
 
-            <Form
-                onSubmit={
-                    handleSubmit
+                if (
+                    !form.currentPassword ||
+                    !form.newPassword ||
+                    !form.confirmPassword
+                ) {
+                    alert(
+                        'All fields are required',
+                    )
+                    return
                 }
-            >
-                <FormItem label="Current Password">
-                    <Input
-                        type="password"
-                        name="currentPassword"
-                        value={
-                            form.currentPassword
-                        }
-                        onChange={
-                            handleChange
-                        }
-                    />
-                </FormItem>
 
-                <FormItem label="New Password">
-                    <Input
-                        type="password"
-                        name="newPassword"
-                        value={
-                            form.newPassword
-                        }
-                        onChange={
-                            handleChange
-                        }
-                    />
-                </FormItem>
+                if (
+                    form.newPassword !==
+                    form.confirmPassword
+                ) {
+                    alert(
+                        'Passwords do not match',
+                    )
+                    return
+                }
 
-                <FormItem label="Confirm Password">
-                    <Input
-                        type="password"
-                        name="confirmPassword"
-                        value={
-                            form.confirmPassword
-                        }
-                        onChange={
-                            handleChange
-                        }
-                    />
-                </FormItem>
+                try {
+                    setLoading(
+                        true,
+                    )
 
-                <div className="flex justify-end">
-                    <Button
-                        variant="solid"
-                        type="submit"
-                        loading={
-                            loading
-                        }
-                    >
-                        Update
-                    </Button>
+                    const res =
+                        await changePassword(
+                            {
+                                currentPassword:
+                                    form.currentPassword,
+                                newPassword:
+                                    form.newPassword,
+                            },
+                        )
+
+                    alert(
+                        res.data
+                            .message ||
+                            'Password updated successfully',
+                    )
+
+                    setForm({
+                        currentPassword:
+                            '',
+                        newPassword:
+                            '',
+                        confirmPassword:
+                            '',
+                    })
+                } catch (
+                    error: any
+                ) {
+                    alert(
+                        error
+                            ?.response
+                            ?.data
+                            ?.message ||
+                            'Password change failed',
+                    )
+                } finally {
+                    setLoading(
+                        false,
+                    )
+                }
+            }
+
+        return (
+            <Card className="p-6">
+                <div className="mb-8">
+                    <h4 className="mb-1">
+                        Security
+                    </h4>
+
+                    <p className="text-gray-500">
+                        Change your password securely
+                    </p>
                 </div>
-            </Form>
-        </div>
-    )
-}
+
+                <Form
+                    onSubmit={handleSubmit}
+                >
+                    <div className="grid gap-5">
+                        <FormItem label="Current Password">
+                            <Input
+                                type="password"
+                                name="currentPassword"
+                                value={
+                                    form.currentPassword
+                                }
+                                onChange={
+                                    handleChange
+                                }
+                                size="lg"
+                            />
+                        </FormItem>
+
+                        <FormItem label="New Password">
+                            <Input
+                                type="password"
+                                name="newPassword"
+                                value={
+                                    form.newPassword
+                                }
+                                onChange={
+                                    handleChange
+                                }
+                                size="lg"
+                            />
+                        </FormItem>
+
+                        <FormItem label="Confirm Password">
+                            <Input
+                                type="password"
+                                name="confirmPassword"
+                                value={
+                                    form.confirmPassword
+                                }
+                                onChange={
+                                    handleChange
+                                }
+                                size="lg"
+                            />
+                        </FormItem>
+                    </div>
+
+                    <div className="flex justify-end mt-6">
+                        <Button
+                            variant="solid"
+                            type="submit"
+                            loading={
+                                loading
+                            }
+                        >
+                            Update Password
+                        </Button>
+                    </div>
+                </Form>
+            </Card>
+        )
+    }
 
 export default SettingsSecurity
