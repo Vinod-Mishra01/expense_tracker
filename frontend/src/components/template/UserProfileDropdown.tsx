@@ -3,7 +3,11 @@ import Dropdown from '@/components/ui/Dropdown'
 import withHeaderItem from '@/utils/hoc/withHeaderItem'
 import { useSessionUser } from '@/store/authStore'
 import { Link } from 'react-router'
-import { PiUserDuotone, PiSignOutDuotone } from 'react-icons/pi'
+import {
+    PiUserDuotone,
+    PiSignOutDuotone,
+    PiShieldCheckDuotone,
+} from 'react-icons/pi'
 import { useAuth } from '@/auth'
 import type { JSX } from 'react'
 
@@ -13,10 +17,22 @@ type DropdownList = {
     icon: JSX.Element
 }
 
-const dropdownItemList: DropdownList[] = []
+const dropdownItemList: DropdownList[] = [
+    {
+        label: 'Profile',
+        path: '/profile',
+        icon: <PiUserDuotone />,
+    },
+    {
+        label: 'Security',
+        path: '/security',
+        icon: <PiShieldCheckDuotone />,
+    },
+]
 
 const _UserDropdown = () => {
-    const { avatar, userName, email } = useSessionUser((state) => state.user)
+    const { avatar, userName, email } =
+        useSessionUser((state) => state.user)
 
     const { signOut } = useAuth()
 
@@ -25,7 +41,13 @@ const _UserDropdown = () => {
     }
 
     const avatarProps = {
-        ...(avatar ? { src: avatar } : { icon: <PiUserDuotone /> }),
+        ...(avatar
+            ? { src: avatar }
+            : {
+                  icon: (
+                      <PiUserDuotone />
+                  ),
+              }),
     }
 
     return (
@@ -34,53 +56,91 @@ const _UserDropdown = () => {
             toggleClassName="flex items-center"
             renderTitle={
                 <div className="cursor-pointer flex items-center">
-                    <Avatar size={32} {...avatarProps} />
+                    <Avatar
+                        size={32}
+                        {...avatarProps}
+                    />
                 </div>
             }
             placement="bottom-end"
         >
             <Dropdown.Item variant="header">
                 <div className="py-2 px-3 flex items-center gap-3">
-                    <Avatar {...avatarProps} />
+                    <Avatar
+                        {...avatarProps}
+                    />
                     <div>
                         <div className="font-bold text-gray-900 dark:text-gray-100">
-                            {userName || 'Anonymous'}
+                            {userName ||
+                                'Anonymous'}
                         </div>
                         <div className="text-xs">
-                            {email || 'No email available'}
+                            {email ||
+                                'No email available'}
                         </div>
                     </div>
                 </div>
             </Dropdown.Item>
+
             <Dropdown.Item variant="divider" />
-            {dropdownItemList.map((item) => (
-                <Dropdown.Item
-                    key={item.label}
-                    eventKey={item.label}
-                    className="px-0"
-                >
-                    <Link className="flex h-full w-full px-2" to={item.path}>
-                        <span className="flex gap-2 items-center w-full">
-                            <span className="text-xl">{item.icon}</span>
-                            <span>{item.label}</span>
-                        </span>
-                    </Link>
-                </Dropdown.Item>
-            ))}
+
+            {dropdownItemList.map(
+                (item) => (
+                    <Dropdown.Item
+                        key={
+                            item.label
+                        }
+                        eventKey={
+                            item.label
+                        }
+                        className="px-0"
+                    >
+                        <Link
+                            className="flex h-full w-full px-2"
+                            to={
+                                item.path
+                            }
+                        >
+                            <span className="flex gap-2 items-center w-full">
+                                <span className="text-xl">
+                                    {
+                                        item.icon
+                                    }
+                                </span>
+                                <span>
+                                    {
+                                        item.label
+                                    }
+                                </span>
+                            </span>
+                        </Link>
+                    </Dropdown.Item>
+                ),
+            )}
+
+            <Dropdown.Item variant="divider" />
+
             <Dropdown.Item
                 eventKey="Sign Out"
                 className="gap-2"
-                onClick={handleSignOut}
+                onClick={
+                    handleSignOut
+                }
             >
                 <span className="text-xl">
                     <PiSignOutDuotone />
                 </span>
-                <span>Sign Out</span>
+                <span>
+                    Sign Out
+                </span>
             </Dropdown.Item>
         </Dropdown>
     )
 }
 
-const UserDropdown = withHeaderItem(_UserDropdown)
+const UserDropdown =
+    withHeaderItem(
+        _UserDropdown,
+    )
 
 export default UserDropdown
