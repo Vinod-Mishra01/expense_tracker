@@ -177,11 +177,16 @@ const SettingsProfile = () => {
                     )}
                 >
                     <div className="flex gap-4 items-center border-b pb-5 mb-6">
-                        <Avatar
-                            size={90}
-                            src={profileImg}
-                            icon={<HiOutlineUser />}
-                        />
+                     <Avatar
+    size={90}
+    src={
+        data.avatar &&
+        !data.avatar.startsWith('blob:')
+            ? data.avatar
+            : ''
+    }
+    icon={<HiOutlineUser />}
+/>
 
                         <Controller
                             name="img"
