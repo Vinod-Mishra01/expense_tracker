@@ -122,11 +122,16 @@ const SettingsProfile = () => {
             {!editMode && data && (
                 <div className="space-y-5">
                     <div className="flex gap-4 items-center border-b pb-5">
-                        <Avatar
-                            size={90}
-                            src={data.avatar}
-                            icon={<HiOutlineUser />}
-                        />
+                      <Avatar
+    size={90}
+    src={
+        data.avatar?.startsWith('data:image') ||
+        data.avatar?.startsWith('http')
+            ? data.avatar
+            : ''
+    }
+    icon={<HiOutlineUser />}
+/>
 
                         <div>
                             <h5>{data.name}</h5>
