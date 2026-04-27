@@ -1,30 +1,71 @@
 import axios from 'axios'
 
 const getToken = () => {
-    const data = JSON.parse(
-        localStorage.getItem('sessionUser') || '{}'
-    )
+    try {
+        const raw =
+            localStorage.getItem(
+                'sessionUser',
+            )
 
-    return data?.state?.user?.token
+        if (!raw) return ''
+
+        const data =
+            JSON.parse(raw)
+
+        return (
+            data?.token ||
+            data?.user
+                ?.token ||
+            data?.state
+                ?.token ||
+            data?.state
+                ?.user
+                ?.token ||
+            ''
+        )
+    } catch (
+        error
+    ) {
+        return ''
+    }
 }
 
-export const getProfile = () =>
-    axios.get(
-        'https://expense-backend-5myt.onrender.com/api/auth/profile',
-        {
-            headers: {
-                Authorization: `Bearer ${getToken()}`,
+export const getProfile =
+    () =>
+        axios.get(
+            'https://expense-backend-5myt.onrender.com/api/auth/profile',
+            {
+                headers:
+                    {
+                        Authorization: `Bearer ${getToken()}`,
+                    },
             },
-        }
-    )
+        )
 
-export const updateProfile = (payload: any) =>
+export const updateProfile = (
+    payload: any,
+) =>
     axios.put(
         'https://expense-backend-5myt.onrender.com/api/auth/profile',
         payload,
         {
-            headers: {
-                Authorization: `Bearer ${getToken()}`,
-            },
-        }
+            headers:
+                {
+                    Authorization: `Bearer ${getToken()}`,
+                },
+        },
+    )
+
+export const changePassword = (
+    payload: any,
+) =>
+    axios.put(
+        'https://expense-backend-5myt.onrender.com/api/auth/change-password',
+        payload,
+        {
+            headers:
+                {
+                    Authorization: `Bearer ${getToken()}`,
+                },
+        },
     )
