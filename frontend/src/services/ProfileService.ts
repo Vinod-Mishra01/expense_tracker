@@ -1,8 +1,9 @@
 import axios from 'axios'
-import { TOKEN_NAME_IN_STORAGE } from '@/constants/api.constant'
+import { useToken } from '@/store/authStore'
 
 const getToken = () => {
-    return localStorage.getItem(TOKEN_NAME_IN_STORAGE) || ''
+    const { token } = useToken()
+    return token || ''
 }
 
 export const getProfile = () =>
