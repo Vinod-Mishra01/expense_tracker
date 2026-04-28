@@ -28,80 +28,139 @@ type FormType = {
 }
 
 const SettingsProfile = () => {
-    const [editMode, setEditMode] = useState(false)
+    const [editMode, setEditMode] =
+        useState(false)
 
-    const { setUser } = useSessionUser()
+    const { setUser } =
+        useSessionUser()
 
     const {
         handleSubmit,
         reset,
         control,
         watch,
-        formState: { isSubmitting },
+        setValue,
+        formState: {
+            isSubmitting,
+        },
     } = useForm<FormType>()
 
-    const { data, mutate } = useSWR(
-        'profile',
-        async () => {
-            const res = await getProfile()
-            return res.data
-        }
-    )
+    const { data, mutate } =
+        useSWR(
+            'profile',
+            async () => {
+                const res =
+                    await getProfile()
+                return res.data
+            },
+        )
 
     useEffect(() => {
         if (data) {
-            const names = data.name?.split(' ') || []
+            const names =
+                data.name?.split(
+                    ' ',
+                ) || []
 
             reset({
-                firstName: names[0] || '',
-                lastName: names[1] || '',
-                email: data.email || '',
-                phoneNumber: data.phone || '',
-                img: data.avatar || '',
-                country: data.country || '',
-                address: data.address || '',
-                city: data.city || '',
-                postcode: data.postcode || '',
+                firstName:
+                    names[0] || '',
+                lastName:
+                    names[1] || '',
+                email:
+                    data.email ||
+                    '',
+                phoneNumber:
+                    data.phone ||
+                    '',
+                img:
+                    data.avatar ||
+                    '',
+                country:
+                    data.country ||
+                    '',
+                address:
+                    data.address ||
+                    '',
+                city:
+                    data.city ||
+                    '',
+                postcode:
+                    data.postcode ||
+                    '',
             })
         }
     }, [data, reset])
 
-    const onSubmit = async (values: FormType) => {
-        const payload = {
-            name: values.firstName + ' ' + values.lastName,
-            email: values.email,
-            phone: values.phoneNumber,
-            avatar: values.img,
-            country: values.country,
-            address: values.address,
-            city: values.city,
-            postcode: values.postcode,
+    const onSubmit =
+        async (
+            values: FormType,
+        ) => {
+            const payload = {
+                name:
+                    values.firstName +
+                    ' ' +
+                    values.lastName,
+                email:
+                    values.email,
+                phone:
+                    values.phoneNumber,
+                avatar:
+                    values.img,
+                country:
+                    values.country,
+                address:
+                    values.address,
+                city:
+                    values.city,
+                postcode:
+                    values.postcode,
+            }
+
+            const res =
+                await updateProfile(
+                    payload,
+                )
+
+            mutate(
+                res.data,
+                false,
+            )
+
+            setUser({
+                avatar:
+                    values.img,
+                userName:
+                    payload.name,
+                email:
+                    payload.email,
+            })
+
+            alert(
+                'Profile Updated Successfully',
+            )
+
+            setEditMode(
+                false,
+            )
         }
 
-        const res = await updateProfile(payload)
-
-        mutate(res.data, false)
-
-      setUser({
-   avatar: values.img,
-   userName: payload.name,
-   email: payload.email,
-})
-
-        alert('Profile Updated')
-
-        setEditMode(false)
-    }
-
-    const profileImg = watch('img')
+    const profileImg =
+        watch('img') || ''
 
     return (
         <Card className="p-6">
             <div className="flex justify-between items-center mb-6">
                 <div>
-                    <h4>Personal Information</h4>
+                    <h4>
+                        Personal Information
+                    </h4>
+
                     <p className="text-gray-500">
-                        Manage your account details
+                        Manage
+                        your
+                        account
+                        details
                     </p>
                 </div>
 
@@ -109,91 +168,121 @@ const SettingsProfile = () => {
                     <Button
                         variant="solid"
                         onClick={() =>
-                            setEditMode(true)
+                            setEditMode(
+                                true,
+                            )
                         }
                     >
-                        Edit Profile
+                        Edit
+                        Profile
                     </Button>
                 )}
             </div>
 
             {/* VIEW MODE */}
 
-            {!editMode && data && (
-                <div className="space-y-5">
-                    <div className="flex gap-4 items-center border-b pb-5">
-                      <Avatar
-    size={90}
-    src={
-        data.avatar?.startsWith('data:image') ||
-        data.avatar?.startsWith('http')
-            ? data.avatar
-            : ''
-    }
-    icon={<HiOutlineUser />}
-/>
+            {!editMode &&
+                data && (
+                    <div className="space-y-5">
+                        <div className="flex gap-4 items-center border-b pb-5">
+                            <Avatar
+                                size={
+                                    90
+                                }
+                                src={
+                                    data.avatar
+                                }
+                                icon={
+                                    <HiOutlineUser />
+                                }
+                            />
+
+                            <div>
+                                <h5>
+                                    {
+                                        data.name
+                                    }
+                                </h5>
+
+                                <p>
+                                    {
+                                        data.email
+                                    }
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="grid md:grid-cols-2 gap-5">
+                            <div>
+                                <b>
+                                    Phone:
+                                </b>{' '}
+                                {data.phone ||
+                                    '-'}
+                            </div>
+
+                            <div>
+                                <b>
+                                    Country:
+                                </b>{' '}
+                                {data.country ||
+                                    '-'}
+                            </div>
+
+                            <div>
+                                <b>
+                                    City:
+                                </b>{' '}
+                                {data.city ||
+                                    '-'}
+                            </div>
+
+                            <div>
+                                <b>
+                                    Postcode:
+                                </b>{' '}
+                                {data.postcode ||
+                                    '-'}
+                            </div>
+                        </div>
 
                         <div>
-                            <h5>{data.name}</h5>
-                            <p>{data.email}</p>
+                            <b>
+                                Address:
+                            </b>{' '}
+                            {data.address ||
+                                '-'}
                         </div>
                     </div>
-
-                    <div className="grid md:grid-cols-2 gap-5">
-                        <div>
-                            <b>Phone:</b>{' '}
-                            {data.phone || '-'}
-                        </div>
-
-                        <div>
-                            <b>Country:</b>{' '}
-                            {data.country || '-'}
-                        </div>
-
-                        <div>
-                            <b>City:</b>{' '}
-                            {data.city || '-'}
-                        </div>
-
-                        <div>
-                            <b>Postcode:</b>{' '}
-                            {data.postcode || '-'}
-                        </div>
-                    </div>
-
-                    <div>
-                        <b>Address:</b>{' '}
-                        {data.address || '-'}
-                    </div>
-                </div>
-            )}
+                )}
 
             {/* EDIT MODE */}
 
             {editMode && (
                 <Form
                     onSubmit={handleSubmit(
-                        onSubmit
+                        onSubmit,
                     )}
                 >
                     <div className="flex gap-4 items-center border-b pb-5 mb-6">
-                     <Avatar
-    size={90}
-    src={
-        data.avatar &&
-        !data.avatar.startsWith('blob:')
-            ? data.avatar
-            : ''
-    }
-    icon={<HiOutlineUser />}
-/>
+                        <Avatar
+                            size={
+                                90
+                            }
+                            src={
+                                profileImg
+                            }
+                            icon={
+                                <HiOutlineUser />
+                            }
+                        />
 
                         <Controller
                             name="img"
-                            control={control}
-                            render={({
-                                field,
-                            }) => (
+                            control={
+                                control
+                            }
+                            render={() => (
                                 <Upload
                                     showList={
                                         false
@@ -202,27 +291,58 @@ const SettingsProfile = () => {
                                         1
                                     }
                                     onChange={(
-                                        files
+                                        files: any,
                                     ) => {
                                         const file =
-                                            files[0]
+                                            files?.[0]
+                                                ?.file ||
+                                            files?.[0]
+
+                                        if (
+                                            !file
+                                        )
+                                            return
+
+                                        const maxSize =
+                                            3 *
+                                            1024 *
+                                            1024
+
+                                        if (
+                                            file.size >
+                                            maxSize
+                                        ) {
+                                            alert(
+                                                'Image too large. Please upload under 3MB.',
+                                            )
+                                            return
+                                        }
 
                                         const reader =
                                             new FileReader()
 
-                                        reader.onloadend =
-                                            () => {
-                                                field.onChange(
-                                                    reader.result
+                                        reader.onload =
+                                            (
+                                                e,
+                                            ) => {
+                                                setValue(
+                                                    'img',
+                                                    e
+                                                        .target
+                                                        ?.result as string,
+                                                    {
+                                                        shouldDirty: true,
+                                                    },
                                                 )
                                             }
 
                                         reader.readAsDataURL(
-                                            file
+                                            file,
                                         )
                                     }}
                                 >
                                     <Button
+                                        type="button"
                                         icon={
                                             <TbPlus />
                                         }
@@ -238,7 +358,9 @@ const SettingsProfile = () => {
                         <FormItem label="First Name">
                             <Controller
                                 name="firstName"
-                                control={control}
+                                control={
+                                    control
+                                }
                                 render={({
                                     field,
                                 }) => (
@@ -252,7 +374,9 @@ const SettingsProfile = () => {
                         <FormItem label="Last Name">
                             <Controller
                                 name="lastName"
-                                control={control}
+                                control={
+                                    control
+                                }
                                 render={({
                                     field,
                                 }) => (
@@ -266,7 +390,9 @@ const SettingsProfile = () => {
                         <FormItem label="Email">
                             <Controller
                                 name="email"
-                                control={control}
+                                control={
+                                    control
+                                }
                                 render={({
                                     field,
                                 }) => (
@@ -280,7 +406,9 @@ const SettingsProfile = () => {
                         <FormItem label="Phone">
                             <Controller
                                 name="phoneNumber"
-                                control={control}
+                                control={
+                                    control
+                                }
                                 render={({
                                     field,
                                 }) => (
@@ -294,7 +422,9 @@ const SettingsProfile = () => {
                         <FormItem label="Country">
                             <Controller
                                 name="country"
-                                control={control}
+                                control={
+                                    control
+                                }
                                 render={({
                                     field,
                                 }) => (
@@ -308,7 +438,9 @@ const SettingsProfile = () => {
                         <FormItem label="City">
                             <Controller
                                 name="city"
-                                control={control}
+                                control={
+                                    control
+                                }
                                 render={({
                                     field,
                                 }) => (
@@ -323,7 +455,9 @@ const SettingsProfile = () => {
                     <FormItem label="Address">
                         <Controller
                             name="address"
-                            control={control}
+                            control={
+                                control
+                            }
                             render={({
                                 field,
                             }) => (
@@ -337,7 +471,9 @@ const SettingsProfile = () => {
                     <FormItem label="Postcode">
                         <Controller
                             name="postcode"
-                            control={control}
+                            control={
+                                control
+                            }
                             render={({
                                 field,
                             }) => (
@@ -353,7 +489,7 @@ const SettingsProfile = () => {
                             type="button"
                             onClick={() =>
                                 setEditMode(
-                                    false
+                                    false,
                                 )
                             }
                         >
@@ -367,7 +503,8 @@ const SettingsProfile = () => {
                                 isSubmitting
                             }
                         >
-                            Save Changes
+                            Save
+                            Changes
                         </Button>
                     </div>
                 </Form>
