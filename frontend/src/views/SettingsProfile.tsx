@@ -82,11 +82,11 @@ const SettingsProfile = () => {
 
         mutate(res.data, false)
 
-        setUser({
-            avatar: res.data.avatar,
-            userName: res.data.name,
-            email: res.data.email,
-        })
+      setUser({
+   avatar: values.img,
+   userName: payload.name,
+   email: payload.email,
+})
 
         alert('Profile Updated')
 

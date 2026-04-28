@@ -302,36 +302,48 @@ exports.getProfile =
 
 /* ================= UPDATE PROFILE ================= */
 
+exports.updateProfile = async (req, res) => {
+    try {
+        const {
+            name,
+            email,
+            phone,
+            avatar,
+            country,
+            address,
+            city,
+            postcode,
+        } = req.body
 
+        const user =
+            await User.findByIdAndUpdate(
+                req.user.id,
+                {
+                    name,
+                    email,
+                    phone,
+                    avatar,
+                    country,
+                    address,
+                    city,
+                    postcode,
+                },
+                {
+                    new: true,
+                    runValidators: true,
+                },
+            ).select('-password')
 
-exports.updateProfile =
-    async (
-        req,
-        res,
-    ) => {
-        try {
-            const user =
-                await User.findByIdAndUpdate(
-                    req.user.id,
-                    req.body,
-                    {
-                        new: true,
-                    },
-                ).select(
-                    '-password',
-                )
+        res.json(user)
+    } catch (error) {
+        console.log(
+            'PROFILE UPDATE ERROR:',
+            error,
+        )
 
-            res.json(
-                user,
-            )
-        } catch (
-            error
-        ) {
-            res.status(
-                500,
-            ).json({
-                message:
-                    'Error updating profile',
-            })
-        }
+        res.status(500).json({
+            message:
+                'Error updating profile',
+        })
     }
+}
