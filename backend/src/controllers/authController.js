@@ -162,12 +162,14 @@ exports.login =
                 200,
             ).json({
                 token,
-                user: {
-                    id: user._id,
-                    name: user.name,
-                    email:
-                        user.email,
-                },
+              user: {
+   id: user._id,
+   name: user.name,
+   email: user.email,
+   avatar: user.avatar || '',
+   phone: user.phone || '',
+   country: user.country || '',
+},
             })
         } catch (
             error
