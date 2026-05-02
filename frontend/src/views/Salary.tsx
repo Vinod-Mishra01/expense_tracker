@@ -528,210 +528,182 @@ const Salary = () => {
 
                 <div className="overflow-x-auto">
 
-                    <table className="w-full min-w-[1000px]">
+                   <table className="w-full min-w-[850px] text-sm">
 
-                        <thead>
-                            <tr className="border-b text-left">
-                                <th className="py-3">
-                                    No
-                                </th>
-                                <th className="py-3">
-                                    Date
-                                </th>
-                                <th className="py-3">
-                                    Salary
-                                </th>
-                                <th className="py-3">
-                                    Deduction
-                                </th>
-                                <th className="py-3">
-                                    Net
-                                </th>
-                                <th className="py-3">
-                                    Extra
-                                </th>
-                                <th className="py-3">
-                                    Final
-                                </th>
-                                <th className="py-3">
-                                    Action
-                                </th>
-                                <th className="py-3">Slip</th>
-                            </tr>
-                        </thead>
+    <thead>
+        <tr className="border-b text-left bg-gray-50">
 
-                        <tbody>
+            <th className="py-4 px-3 font-semibold">
+                No
+            </th>
 
-                            {filteredData.map(
-                                (
-                                    item,
-                                    i,
-                                ) => {
-                                    const final =
-                                        Number(
-                                            item.netSalary ||
-                                                0,
-                                        ) +
-                                        Number(
-                                            item.extraIncome ||
-                                                0,
-                                        )
+            <th className="py-4 px-3 font-semibold">
+                Date
+            </th>
 
-                                    return (
-                                        <tr
-                                            key={
-                                                i
-                                            }
-                                            className="border-b"
-                                        >
-                                            <td className="py-4">
-                                                {i +
-                                                    1}
-                                            </td>
+            <th className="py-4 px-3 font-semibold">
+                Salary
+            </th>
 
-                                            <td className="py-4">
-                                                {item.date
-                                                    ? new Date(
-                                                          item.date,
-                                                      ).toLocaleDateString()
-                                                    : `${item.month} ${item.year}`}
-                                            </td>
+            <th className="py-4 px-3 font-semibold">
+                Deduction
+            </th>
 
-                                            <td className="py-4">
-                                                ₹
-                                                {
-                                                    item.grossSalary
-                                                }
-                                            </td>
+            <th className="py-4 px-3 font-semibold">
+                Extra
+            </th>
 
-                                            <td className="py-4">
-                                                ₹
-                                                {
-                                                    item.deduction
-                                                }
-                                            </td>
+            <th className="py-4 px-3 font-semibold">
+                Final
+            </th>
 
-                                            <td className="py-4">
-                                                ₹
-                                                {
-                                                    item.netSalary
-                                                }
-                                            </td>
+            <th className="py-4 px-3 font-semibold text-center">
+                Slip
+            </th>
 
-                                            <td className="py-4">
-                                                ₹
-                                                {item.extraIncome ||
-                                                    0}
-                                            </td>
+            <th className="py-4 px-3 font-semibold text-center">
+                Action
+            </th>
 
-                                            <td className="py-4 font-semibold">
-                                                ₹
-                                                {
-                                                    final
-                                                }
-                                            </td>
+        </tr>
+    </thead>
 
-                                            <td className="py-4">
-                                                <div className="flex gap-2">
+    <tbody>
 
-                                                    <Button
-                                                        size="sm"
-                                                        variant="solid"
-                                                        onClick={() => {
-                                                            setEditId(
-                                                                item._id,
-                                                            )
+        {filteredData.map((item, i) => {
 
-                                                            setDate(
-                                                                item.date
-                                                                    ? new Date(
-                                                                          item.date,
-                                                                      )
-                                                                          .toISOString()
-                                                                          .split(
-                                                                              'T',
-                                                                          )[0]
-                                                                    : today,
-                                                            )
+            const final =
+                Number(item.netSalary || 0) +
+                Number(item.extraIncome || 0)
 
-                                                            setGrossSalary(
-                                                                String(
-                                                                    item.grossSalary ||
-                                                                        '',
-                                                                ),
-                                                            )
+            return (
 
-                                                            setDeduction(
-                                                                String(
-                                                                    item.deduction ||
-                                                                        '',
-                                                                ),
-                                                            )
+                <tr
+                    key={i}
+                    className="border-b hover:bg-gray-50 transition"
+                >
 
-                                                            setNote(
-                                                                item.note ||
-                                                                    '',
-                                                            )
+                    <td className="py-4 px-3">
+                        {i + 1}
+                    </td>
 
-                                                            setExtraIncome(
-                                                                String(
-                                                                    item.extraIncome ||
-                                                                        '',
-                                                                ),
-                                                            )
+                    <td className="py-4 px-3 whitespace-nowrap">
+                        {item.date
+                            ? new Date(item.date).toLocaleDateString(
+                                  'en-GB',
+                              )
+                            : `${item.month} ${item.year}`}
+                    </td>
 
-                                                            setExtraSource(
-                                                                item.extraSource ||
-                                                                    '',
-                                                            )
+                    <td className="py-4 px-3 font-medium">
+                        ₹{item.grossSalary}
+                    </td>
 
-                                                            window.scrollTo(
-                                                                {
-                                                                    top: 0,
-                                                                    behavior:
-                                                                        'smooth',
-                                                                },
-                                                            )
-                                                        }}
-                                                    >
-                                                        Edit
-                                                    </Button>
+                    <td className="py-4 px-3">
+                        ₹{item.deduction}
+                    </td>
 
-                                                    <Button
-                                                        size="sm"
-                                                        onClick={() =>
-                                                            del(
-                                                                item._id,
-                                                            )
-                                                        }
-                                                    >
-                                                        Delete
-                                                    </Button>
+                    <td className="py-4 px-3 text-green-600 font-medium">
+                        ₹{item.extraIncome || 0}
+                    </td>
 
-                                                </div>
-                                            </td>
-                                            <td className="py-4">
- {item.slipFile ? (
-   <a
-     href={`https://expense-backend-5myt.onrender.com/${item.slipFile}`}
-     target="_blank"
-     className="text-blue-500 underline"
-   >
-     View
-   </a>
- ) : (
-   '-'
- )}
-</td>
+                    <td className="py-4 px-3 font-semibold text-blue-600">
+                        ₹{final}
+                    </td>
 
-                                        </tr>
+                    <td className="py-4 px-3 text-center">
+
+                        {item.slipFile ? (
+
+                            <a
+                                href={`https://expense-backend-5myt.onrender.com/uploads/salary/${item.slipFile}`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="text-blue-600 hover:underline font-medium"
+                            >
+                                View
+                            </a>
+
+                        ) : (
+                            '-'
+                        )}
+
+                    </td>
+
+                    <td className="py-4 px-3">
+
+                        <div className="flex justify-center gap-2">
+
+                            <Button
+                                size="xs"
+                                variant="solid"
+                                onClick={() => {
+
+                                    setEditId(item._id)
+
+                                    setDate(
+                                        item.date
+                                            ? new Date(item.date)
+                                                  .toISOString()
+                                                  .split('T')[0]
+                                            : today,
                                     )
-                                },
-                            )}
 
-                        </tbody>
+                                    setGrossSalary(
+                                        String(
+                                            item.grossSalary || '',
+                                        ),
+                                    )
 
-                    </table>
+                                    setDeduction(
+                                        String(
+                                            item.deduction || '',
+                                        ),
+                                    )
+
+                                    setNote(
+                                        item.note || '',
+                                    )
+
+                                    setExtraIncome(
+                                        String(
+                                            item.extraIncome ?? '',
+                                        ),
+                                    )
+
+                                    setExtraSource(
+                                        item.extraSource ?? '',
+                                    )
+
+                                    window.scrollTo({
+                                        top: 0,
+                                        behavior: 'smooth',
+                                    })
+                                }}
+                            >
+                                Edit
+                            </Button>
+
+                            <Button
+                                size="xs"
+                                onClick={() =>
+                                    del(item._id)
+                                }
+                            >
+                                Delete
+                            </Button>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+            )
+        })}
+
+    </tbody>
+
+</table>
 
                 </div>
 

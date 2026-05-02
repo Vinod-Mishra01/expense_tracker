@@ -309,86 +309,97 @@ const ViewSavings = () => {
             0,
         )
 
-    const columns = [
-        {
-            header: 'Title',
-            accessorKey:
-                'title',
-        },
-        {
-            header: 'Amount',
-            accessorKey:
-                'amount',
-            cell: ({
-                row,
-            }: any) => (
-                <b>
-                    ₹{' '}
-                    {
-                        row
-                            .original
-                            .amount
-                    }
-                </b>
-            ),
-        },
-        {
-            header: 'Type',
-            accessorKey:
-                'type',
-        },
-        {
-            header: 'Date',
-            accessorKey:
-                'date',
-            cell: ({
-                row,
-            }: any) =>
-                new Date(
-                    row
-                        .original
-                        .date,
-                ).toLocaleDateString(),
-        },
-        {
-            header: 'Action',
-            cell: ({
-                row,
-            }: any) => (
-                <div className="flex gap-2">
-                    <Button
-                        size="sm"
-                        icon={
-                            <TbEdit />
-                        }
-                        onClick={() =>
-                            handleEditOpen(
-                                row.original,
-                            )
-                        }
-                    >
-                        Edit
-                    </Button>
+   const columns = [
 
-                    <Button
-                        size="sm"
-                        icon={
-                            <TbTrash />
-                        }
-                        onClick={() =>
-                            handleDelete(
-                                row
-                                    .original
-                                    ._id,
-                            )
-                        }
-                    >
-                        Delete
-                    </Button>
-                </div>
-            ),
-        },
-    ]
+{
+    header: 'Title',
+    accessorKey: 'title',
+
+    cell: ({ row }: any) => (
+        <div >
+
+            <div className="font-semibold text-sm leading-tight">
+                {row.original.title}
+            </div>
+
+       
+        </div>
+    ),
+},
+
+{
+    header: 'Amount',
+    accessorKey: 'amount',
+
+    cell: ({ row }: any) => (
+        <span className="font-semibold text-red-500 whitespace-nowrap">
+            ₹{row.original.amount}
+        </span>
+    ),
+},
+
+{
+    header: 'Type',
+    accessorKey: 'type',
+
+    cell: ({ row }: any) => (
+        <span className="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 whitespace-nowrap">
+            {row.original.type}
+        </span>
+    ),
+},
+
+{
+    header: 'Date',
+    accessorKey: 'date',
+
+    cell: ({ row }: any) => (
+        <span className="whitespace-nowrap text-sm">
+            {new Date(
+                row.original.date,
+            ).toLocaleDateString(
+                'en-GB',
+            )}
+        </span>
+    ),
+},
+
+{
+    header: 'Action',
+
+    cell: ({ row }: any) => (
+        <div className="flex gap-2 whitespace-nowrap">
+
+            <Button
+                size="xs"
+                variant="solid"
+                icon={<TbEdit />}
+                onClick={() =>
+                    handleEditOpen(
+                        row.original,
+                    )
+                }
+            >
+                Edit
+            </Button>
+
+            <Button
+                size="xs"
+                icon={<TbTrash />}
+                onClick={() =>
+                    handleDelete(
+                        row.original._id,
+                    )
+                }
+            >
+                Delete
+            </Button>
+
+        </div>
+    ),
+},
+
+]
 
     return (
         <Container>

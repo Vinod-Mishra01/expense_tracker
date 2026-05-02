@@ -315,8 +315,9 @@ const columns = [
 {
     header: 'No.',
     enableSorting: false,
+
     cell: ({ row }: any) => (
-        <span className="font-semibold">
+        <span className="font-semibold text-sm">
             {row.index + 1}
         </span>
     ),
@@ -328,14 +329,14 @@ const columns = [
     enableSorting: false,
 
     cell: ({ row }: any) => (
-        <div className="min-w-[150px]">
+        <div className="min-w-[180px]">
 
             <div className="font-semibold text-sm leading-tight">
                 {row.original.title}
             </div>
 
             <div className="text-xs text-gray-500 mt-1">
-                {row.original.expenseId}
+                ID: {row.original.expenseId}
             </div>
 
         </div>
@@ -345,7 +346,7 @@ const columns = [
 {
     header: (
         <span
-            className="cursor-pointer inline-flex items-center whitespace-nowrap"
+            className="cursor-pointer inline-flex items-center font-semibold whitespace-nowrap"
             onClick={() =>
                 handleSort('amount')
             }
@@ -358,7 +359,7 @@ const columns = [
 
     cell: ({ row }: any) => (
         <span className="font-semibold text-red-500 whitespace-nowrap">
-            ₹ {row.original.amount}
+            ₹{row.original.amount}
         </span>
     ),
 },
@@ -369,7 +370,7 @@ const columns = [
     enableSorting: false,
 
     cell: ({ row }: any) => (
-        <span className="px-2 py-1 rounded-full text-xs bg-gray-100 dark:bg-gray-700 whitespace-nowrap">
+        <span className="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 whitespace-nowrap">
             {row.original.category}
         </span>
     ),
@@ -378,7 +379,7 @@ const columns = [
 {
     header: (
         <span
-            className="cursor-pointer inline-flex items-center whitespace-nowrap"
+            className="cursor-pointer inline-flex items-center font-semibold whitespace-nowrap"
             onClick={() =>
                 handleSort('date')
             }
@@ -390,10 +391,12 @@ const columns = [
     accessorKey: 'date',
 
     cell: ({ row }: any) => (
-        <span className="whitespace-nowrap">
+        <span className="whitespace-nowrap text-sm">
             {new Date(
                 row.original.date,
-            ).toLocaleDateString()}
+            ).toLocaleDateString(
+                'en-GB',
+            )}
         </span>
     ),
 },
@@ -401,7 +404,7 @@ const columns = [
 {
     header: (
         <span
-            className="cursor-pointer inline-flex items-center whitespace-nowrap"
+            className="cursor-pointer inline-flex items-center font-semibold whitespace-nowrap"
             onClick={() =>
                 handleSort('paymentMethod')
             }
@@ -413,7 +416,7 @@ const columns = [
     accessorKey: 'paymentMethod',
 
     cell: ({ row }: any) => (
-        <span className="whitespace-nowrap">
+        <span className="px-3 py-1 rounded-full text-xs bg-blue-50 text-blue-600 dark:bg-blue-900/30 whitespace-nowrap">
             {row.original.paymentMethod}
         </span>
     ),
@@ -427,7 +430,8 @@ const columns = [
         <div className="flex gap-2 whitespace-nowrap">
 
             <Button
-                size="sm"
+                size="xs"
+                variant="solid"
                 icon={<TbEdit />}
                 onClick={() =>
                     handleEditOpen(
@@ -439,7 +443,7 @@ const columns = [
             </Button>
 
             <Button
-                size="sm"
+                size="xs"
                 icon={<TbTrash />}
                 onClick={() =>
                     handleDelete(
