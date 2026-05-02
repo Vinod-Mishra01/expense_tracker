@@ -1,14 +1,10 @@
 
- jay hardddddd
-
-
- jayyy sechhhhshhhs
 =======
 # VM TECH - Personal Expense Tracker, Vite & TypeScript Web Template
 
-Ecme  is a modern and responsive admin dashboard template built with React and TypeScript. Designed to provide a highly customizable and easy-to-use platform for building admin interfaces, it includes a variety of reusable components, pre-designed pages, and dynamic features. 
+VM TECH modern and responsive admin dashboard template built with React and TypeScript. Designed to provide a highly customizable and easy-to-use platform for building admin interfaces, it includes a variety of reusable components, pre-designed pages, and dynamic features. 
 
-This template is perfect for developing dashboards, web applications, CRM systems, e-commerce backends, and more. Whether you're building a small-scale admin panel or a large-scale enterprise application, Ecme is designed to be flexible and scalable.
+This template is perfect for developing dashboards, web applications, CRM systems, e-commerce backends, and more. Whether you're building a small-scale admin panel or a large-scale enterprise application, VM TECH signed to be flexible and scalable.
 
 Key Features:
 - **Responsive Layout**: Optimized for all screen sizes and devices.
@@ -21,6 +17,3 @@ Key Features:
 - **API Ready**: Simple integration with any RESTful API.
 
 
-steps -1 -3 -4 
-
-gg

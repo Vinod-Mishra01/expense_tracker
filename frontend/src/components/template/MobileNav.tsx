@@ -50,31 +50,53 @@ const MobileNav = ({
             <div className="text-2xl" onClick={handleOpenDrawer}>
                 <MobileNavToggle toggled={isOpen} />
             </div>
-            <Drawer
-              title={ <div className="w-35">
-     <Logo />
-  </div>}
-                isOpen={isOpen}
-                bodyClass={classNames('p-0')}
-                width={330}
-                placement={direction === DIR_RTL ? 'right' : 'left'}
-                onClose={handleDrawerClose}
-                onRequestClose={handleDrawerClose}
-            >
-                <Suspense fallback={<></>}>
-                    {isOpen && (
-                        <VerticalMenuContent
-                            collapsed={false}
-                            navigationTree={navigationConfig}
-                            routeKey={currentRouteKey}
-                            userAuthority={userAuthority as string[]}
-                            direction={direction}
-                            translationSetup={translationSetup}
-                            onMenuItemClick={handleDrawerClose}
-                        />
-                    )}
-                </Suspense>
-            </Drawer>
+       <Drawer
+    title={
+        <div className="w-35">
+
+            {/* Light Mode Logo */}
+            <img
+                src="/img/logo/logo-light-full.png"
+                alt="Logo"
+                className="block dark:hidden w-full h-auto"
+            />
+
+            {/* Dark Mode Logo */}
+            <img
+                src="/img/logo/logo-dark-full.png"
+                alt="Logo"
+                className="hidden dark:block w-full h-auto"
+            />
+
+        </div>
+    }
+    isOpen={isOpen}
+    bodyClass={classNames('p-0')}
+    width={330}
+    placement={
+        direction === DIR_RTL
+            ? 'right'
+            : 'left'
+    }
+    onClose={handleDrawerClose}
+    onRequestClose={handleDrawerClose}
+>
+    <Suspense fallback={<></>}>
+
+        {isOpen && (
+            <VerticalMenuContent
+                collapsed={false}
+                navigationTree={navigationConfig}
+                routeKey={currentRouteKey}
+                userAuthority={userAuthority as string[]}
+                direction={direction}
+                translationSetup={translationSetup}
+                onMenuItemClick={handleDrawerClose}
+            />
+        )}
+
+    </Suspense>
+</Drawer>
         </>
     )
 }
