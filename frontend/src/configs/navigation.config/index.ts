@@ -8,6 +8,7 @@ import {
 
 import type { NavigationTree } from '@/@types/navigation'
 
+
 const navigationConfig: NavigationTree[] = [
     // DASHBOARD LABEL
     {
@@ -35,7 +36,7 @@ const navigationConfig: NavigationTree[] = [
                 path: '/salary',
                 title: 'Manage Salary',
                 translateKey:'nav.manageSalary',
-                icon: 'home',
+                icon:'manageSalary',
                 type: NAV_ITEM_TYPE_ITEM,
                 authority: [],
                 subMenu: [],
@@ -59,7 +60,7 @@ const navigationConfig: NavigationTree[] = [
                 path: '',
                 title: 'Manage Expense',
                 translateKey: 'nav.expense',
-                icon: 'collapseMenu',
+                icon: 'manageExpense',
                 type: NAV_ITEM_TYPE_COLLAPSE,
                 authority: [],
                 subMenu: [
