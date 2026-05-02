@@ -556,6 +556,7 @@ const Salary = () => {
                                 <th className="py-3">
                                     Action
                                 </th>
+                                <th className="py-3">Slip</th>
                             </tr>
                         </thead>
 
@@ -709,6 +710,19 @@ const Salary = () => {
 
                                                 </div>
                                             </td>
+                                            <td className="py-4">
+ {item.slipFile ? (
+   <a
+     href={`https://expense-backend-5myt.onrender.com/${item.slipFile}`}
+     target="_blank"
+     className="text-blue-500 underline"
+   >
+     View
+   </a>
+ ) : (
+   '-'
+ )}
+</td>
 
                                         </tr>
                                     )

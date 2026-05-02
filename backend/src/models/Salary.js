@@ -11,11 +11,23 @@ const salarySchema = new mongoose.Schema(
 
     year: Number,
 
+    date: Date,
+
     grossSalary: Number,
 
     deduction: Number,
 
     netSalary: Number,
+
+    extraIncome: {
+        type: Number,
+        default: 0,
+    },
+
+    extraSource: {
+        type: String,
+        default: '',
+    },
 
     slipFile: String,
 
