@@ -1,96 +1,79 @@
 const Salary = require('../models/Salary')
 
-const createSalary = async (
-    req,
-    res,
-) => {
+const createSalary = async (req, res) => {
     try {
         const {
+            date,
             month,
             year,
             grossSalary,
             deduction,
             note,
+            extraIncome,
+            extraSource,
         } = req.body
 
         const netSalary =
-            Number(
-                grossSalary,
-            ) -
-            Number(
-                deduction || 0,
-            )
+            Number(grossSalary) -
+            Number(deduction || 0)
 
-        const data =
-            await Salary.create({
-                userId:
-                    req.user.id,
-                month,
-                year,
-                grossSalary,
-                deduction,
-                netSalary,
-                note,
-                slipFile:
-                    req.file
-                        ?.filename ||
-                    '',
-            })
+        const data = await Salary.create({
+            userId: req.user.id,
+            date,
+            month,
+            year,
+            grossSalary,
+            deduction,
+            netSalary,
+            note,
+            extraIncome:
+                Number(extraIncome || 0),
+            extraSource:
+                extraSource || '',
+            slipFile:
+                req.file?.filename || '',
+        })
 
-        res.status(201).json(
-            data,
-        )
+        res.status(201).json(data)
     } catch {
         res.status(500).json({
-            message:
-                'Create failed',
+            message: 'Create failed',
         })
     }
 }
 
-const getSalary =
-    async (
-        req,
-        res,
-    ) => {
-        const data =
-            await Salary.find({
-                userId:
-                    req.user.id,
-            }).sort({
-                createdAt: -1,
-            })
+const getSalary = async (req, res) => {
+    const data = await Salary.find({
+        userId: req.user.id,
+    }).sort({
+        createdAt: -1,
+    })
 
-        res.json(data)
-    }
+    res.json(data)
+}
 
-const deleteSalary =
-    async (
-        req,
-        res,
-    ) => {
-        await Salary.findOneAndDelete(
-            {
-                _id: req.params.id,
-                userId:
-                    req.user.id,
-            },
-        )
+const deleteSalary = async (req, res) => {
+    await Salary.findOneAndDelete({
+        _id: req.params.id,
+        userId: req.user.id,
+    })
 
-        res.json({
-            message:
-                'Deleted',
-        })
-    }
+    res.json({
+        message: 'Deleted',
+    })
+}
 
 const updateSalary = async (req, res) => {
     try {
         const {
+            date,
             month,
             year,
             grossSalary,
             deduction,
             note,
+            extraIncome,
+            extraSource,
         } = req.body
 
         const netSalary =
@@ -110,20 +93,23 @@ const updateSalary = async (req, res) => {
                     userId: req.user.id,
                 },
                 {
+                    date,
                     month,
                     year,
                     grossSalary,
                     deduction,
                     netSalary,
                     note,
+                    extraIncome:
+                        Number(extraIncome || 0),
+                    extraSource:
+                        extraSource || '',
                     slipFile:
                         req.file?.filename ||
                         oldData?.slipFile ||
                         '',
                 },
-                {
-                    new: true,
-                },
+                { new: true }
             )
 
         res.json(data)
@@ -133,7 +119,6 @@ const updateSalary = async (req, res) => {
         })
     }
 }
-
 
 module.exports = {
     createSalary,
