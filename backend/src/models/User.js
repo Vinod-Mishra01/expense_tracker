@@ -78,10 +78,22 @@ const userSchema =
                 type: String,
                 default: '',
             },
+
+            resetPasswordToken: {
+    type: String,
+    default: '',
+},
+
+resetPasswordExpire: {
+    type: Date,
+},
         },
         {
             timestamps: true,
         },
+
+
+        
     )
 
 module.exports =

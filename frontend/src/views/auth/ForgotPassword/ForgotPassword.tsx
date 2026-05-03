@@ -29,15 +29,14 @@ export const ForgotPasswordBase = ({
                     <>
                         <h3 className="mb-2">Check your email</h3>
                         <p className="font-semibold heading-text">
-                            We have sent a password recovery to your email
+                         We have sent a password reset link to your email
                         </p>
                     </>
                 ) : (
                     <>
                         <h3 className="mb-2">Forgot Password</h3>
                         <p className="font-semibold heading-text">
-                            Please enter your email to receive a verification
-                            code
+                          Please enter your email to receive a password reset link
                         </p>
                     </>
                 )}

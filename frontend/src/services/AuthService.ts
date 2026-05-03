@@ -57,9 +57,19 @@ export async function apiForgotPassword<T>(data: ForgotPassword) {
     })
 }
 
-export async function apiResetPassword<T>(data: ResetPassword) {
+// export async function apiResetPassword<T>(data: ResetPassword) {
+//     return ApiService.fetchDataWithAxios<T>({
+//         url: endpointConfig.resetPassword,
+//         method: 'post',
+//         data,
+//     })
+// }
+export async function apiResetPassword<T>(
+    token: string,
+    data: ResetPassword,
+) {
     return ApiService.fetchDataWithAxios<T>({
-        url: endpointConfig.resetPassword,
+        url: `${endpointConfig.resetPassword}/${token}`,
         method: 'post',
         data,
     })

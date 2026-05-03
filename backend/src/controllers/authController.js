@@ -3,6 +3,8 @@
 const User = require('../models/User')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const crypto = require('crypto')
+const nodemailer = require('nodemailer')
 
 /* ================= REGISTER ================= */
 exports.register =
@@ -302,6 +304,21 @@ exports.getProfile =
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
 /* ================= UPDATE PROFILE ================= */
 
 exports.updateProfile = async (req, res) => {
@@ -346,6 +363,154 @@ exports.updateProfile = async (req, res) => {
         res.status(500).json({
             message:
                 'Error updating profile',
+        })
+    }
+}
+
+
+
+
+
+
+
+
+exports.forgotPassword = async (
+    req,
+    res,
+) => {
+    try {
+        const { email } =
+            req.body
+
+        const user =
+            await User.findOne({
+                email,
+            })
+
+        if (!user) {
+            return res.status(
+                404,
+            ).json({
+                message:
+                    'User not found',
+            })
+        }
+
+        const resetToken =
+            crypto
+                .randomBytes(32)
+                .toString('hex')
+
+        user.resetPasswordToken =
+            resetToken
+
+        user.resetPasswordExpire =
+            Date.now() +
+            15 * 60 * 1000
+
+        await user.save()
+
+        const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`
+
+        const transporter =
+            nodemailer.createTransport({
+                service:
+                    'gmail',
+                auth: {
+                    user: process
+                        .env
+                        .EMAIL_USER,
+                    pass: process
+                        .env
+                        .EMAIL_PASS,
+                },
+            })
+
+        await transporter.sendMail({
+            from: process
+                .env
+                .EMAIL_USER,
+            to: email,
+            subject:
+                'Password Reset',
+            html: `
+                <h3>Reset Password</h3>
+                <p>Click below link:</p>
+                <a href="${resetUrl}">
+                    Reset Password
+                </a>
+            `,
+        })
+
+        res.json({
+            message:
+                'Reset link sent to email',
+        })
+    } catch (error) {
+        res.status(500).json({
+            message:
+                'Forgot password failed',
+        })
+    }
+}
+
+exports.resetPassword = async (
+    req,
+    res,
+) => {
+    try {
+        const { token } =
+            req.params
+
+        const {
+            password,
+        } = req.body
+
+        const user =
+            await User.findOne({
+                resetPasswordToken:
+                    token,
+                resetPasswordExpire:
+                    {
+                        $gt:
+                            Date.now(),
+                    },
+            })
+
+        if (!user) {
+            return res.status(
+                400,
+            ).json({
+                message:
+                    'Invalid or expired link',
+            })
+        }
+
+        const hashedPassword =
+            await bcrypt.hash(
+                password,
+                10,
+            )
+
+        user.password =
+            hashedPassword
+
+        user.resetPasswordToken =
+            ''
+
+        user.resetPasswordExpire =
+            null
+
+        await user.save()
+
+        res.json({
+            message:
+                'Password reset successful',
+        })
+    } catch (error) {
+        res.status(500).json({
+            message:
+                'Reset failed',
         })
     }
 }
