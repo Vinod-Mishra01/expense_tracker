@@ -412,19 +412,29 @@ exports.forgotPassword = async (
 
         const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`
 
+        // const transporter =
+        //     nodemailer.createTransport({
+        //         service:
+        //             'gmail',
+        //         auth: {
+        //             user: process
+        //                 .env
+        //                 .EMAIL_USER,
+        //             pass: process
+        //                 .env
+        //                 .EMAIL_PASS,
+        //         },
+        //     })
+
         const transporter =
-            nodemailer.createTransport({
-                service:
-                    'gmail',
-                auth: {
-                    user: process
-                        .env
-                        .EMAIL_USER,
-                    pass: process
-                        .env
-                        .EMAIL_PASS,
-                },
-            })
+nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+    },
+    connectionTimeout: 10000,
+})
 
         await transporter.sendMail({
             from: process
@@ -447,11 +457,16 @@ exports.forgotPassword = async (
                 'Reset link sent to email',
         })
     } catch (error) {
-        res.status(500).json({
-            message:
-                'Forgot password failed',
-        })
-    }
+    console.log(
+        'FORGOT PASSWORD ERROR:',
+        error
+    )
+
+    res.status(500).json({
+        message:
+            'Forgot password failed',
+    })
+}
 }
 
 exports.resetPassword = async (
