@@ -12,11 +12,13 @@ type Session = {
 type AuthState = {
     session: Session
     user: User
+    hydrated: boolean
 }
 
 type AuthAction = {
     setSessionSignedIn: (payload: boolean) => void
     setUser: (payload: User) => void
+    setHydrated: (payload: boolean) => void
 }
 
 const getPersistStorage = () => {
@@ -35,18 +37,22 @@ const initialState: AuthState = {
     session: {
         signedIn: false,
     },
+
     user: {
         avatar: '',
         userName: '',
         email: '',
         authority: [],
     },
+
+    hydrated: false,
 }
 
 export const useSessionUser = create<AuthState & AuthAction>()(
     persist(
         (set) => ({
             ...initialState,
+
             setSessionSignedIn: (payload) =>
                 set((state) => ({
                     session: {
@@ -54,6 +60,7 @@ export const useSessionUser = create<AuthState & AuthAction>()(
                         signedIn: payload,
                     },
                 })),
+
             setUser: (payload) =>
                 set((state) => ({
                     user: {
@@ -61,20 +68,45 @@ export const useSessionUser = create<AuthState & AuthAction>()(
                         ...payload,
                     },
                 })),
+
+            setHydrated: (payload) =>
+                set({
+                    hydrated: payload,
+                }),
         }),
-        { name: 'sessionUser', storage: createJSONStorage(() => localStorage) },
+
+        {
+            name: 'sessionUser',
+
+            storage: createJSONStorage(
+                () => localStorage,
+            ),
+
+            onRehydrateStorage: () => (state) => {
+                state?.setHydrated(true)
+            },
+        },
     ),
 )
 
 export const useToken = () => {
-    const storage = getPersistStorage()
+    const storage =
+        getPersistStorage()
 
-    const setToken = (token: string) => {
-        storage.setItem(TOKEN_NAME_IN_STORAGE, token)
+    const setToken = (
+        token: string,
+    ) => {
+        storage.setItem(
+            TOKEN_NAME_IN_STORAGE,
+            token,
+        )
     }
 
     return {
         setToken,
-        token: storage.getItem(TOKEN_NAME_IN_STORAGE),
+
+        token: storage.getItem(
+            TOKEN_NAME_IN_STORAGE,
+        ),
     }
 }

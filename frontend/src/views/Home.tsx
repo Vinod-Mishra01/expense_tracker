@@ -12,8 +12,11 @@ import Container from '@/components/shared/Container'
 import Loading from '@/components/shared/Loading'
 import Card from '@/components/ui/Card'
 import Select from '@/components/ui/Select'
+import { useNavigate } from 'react-router'
+import toast from '@/components/ui/toast'
+import Notification from '@/components/ui/Notification'
 import Chart from '@/components/shared/Chart'
-import { useToken } from '@/store/authStore'
+import { useToken, useSessionUser } from '@/store/authStore'
 import {
     TbWallet,
     TbReceipt2,
@@ -24,12 +27,23 @@ import {
 } from 'react-icons/tb'
 
 const Home = () => {
-    const { token } = useToken()
+    const navigate =
+        useNavigate()
 
-    const authToken =
-        token ||
-        localStorage.getItem(
-            'token',
+    const { token } =
+        useToken()
+
+    const hydrated =
+        useSessionUser(
+            (state) =>
+                state.hydrated,
+        )
+
+    const signedIn =
+        useSessionUser(
+            (state) =>
+                state.session
+                    .signedIn,
         )
 
     const [loading, setLoading] =
@@ -50,135 +64,202 @@ const Home = () => {
     const [activeTab, setActiveTab] =
         useState('balance')
 
- // REPLACE EVERYTHING FROM const now = new Date()  TILL  return
-// in your Home.tsx with this cleaned fixed block
+    // -------------------------
+    // DATE FILTER
+    // -------------------------
 
-const now =
-    new Date()
+    const now = new Date()
 
-const [selectedMonth, setSelectedMonth] =
-    useState<any>(
-        now.getMonth(),
-    )
+    const [selectedMonth, setSelectedMonth] =
+        useState<any>(
+            now.getMonth(),
+        )
 
-const [selectedYear, setSelectedYear] =
-    useState<any>(
-        now.getFullYear(),
-    )
+    const [selectedYear, setSelectedYear] =
+        useState<any>(
+            now.getFullYear(),
+        )
 
-const monthOptions = [
-    {
-        label: 'All',
-        value: 'all',
-    },
-
-    ...[
-        'January',
-        'February',
-        'March',
-        'April',
-        'May',
-        'June',
-        'July',
-        'August',
-        'September',
-        'October',
-        'November',
-        'December',
-    ].map(
-        (
-            item,
-            index,
-        ) => ({
+    const monthOptions = [
+        { label: 'All', value: 'all' },
+        ...[
+            'January','February','March','April','May','June',
+            'July','August','September','October','November','December',
+        ].map((item, index) => ({
             label: item,
             value: index,
-        }),
-    ),
-]
+        })),
+    ]
 
-const yearOptions = [
-    {
-        label: 'All',
-        value: 'all',
-    },
-
-    ...[
-        2024,
-        2025,
-        2026,
-        2027,
-        2028,
-        2029,
-    ].map(
-        (
-            y,
-        ) => ({
-            label: String(
-                y,
-            ),
+    const yearOptions = [
+        { label: 'All', value: 'all' },
+        ...[2024, 2025, 2026, 2027, 2028, 2029].map((y) => ({
+            label: String(y),
             value: y,
-        }),
-    ),
-]
+        })),
+    ]
 
+    // -------------------------
+    // FETCH DATA
+    // -------------------------
 
-const fetchData = async () => {
+ const fetchData = async () => {
     try {
         setLoading(true)
+
+        const authToken =
+            token ||
+            localStorage.getItem(
+                'token',
+            )
+
+        if (!authToken) {
+            navigate(
+                '/sign-in',
+            )
+            return
+        }
 
         const headers = {
             Authorization: `Bearer ${authToken}`,
         }
 
-        const [
-            expRes,
-            savRes,
-            borRes,
-            salRes,
-        ] = await Promise.all([
-            axios.get(
-                'https://expense-backend-5myt.onrender.com/api/expense/list',
-                { headers },
-            ),
-            axios.get(
-                'https://expense-backend-5myt.onrender.com/api/saving/list',
-                { headers },
-            ),
-            axios.get(
-                'https://expense-backend-5myt.onrender.com/api/borrow-lend/list',
-                { headers },
-            ),
-            axios.get(
-                'https://expense-backend-5myt.onrender.com/api/salary/list',
-                { headers },
-            ),
-        ])
+        const results =
+            await Promise.allSettled(
+                [
+                    axios.get(
+                        'https://expense-backend-5myt.onrender.com/api/expense/list',
+                        { headers },
+                    ),
 
-        setExpenses(expRes.data || [])
-        setSavings(savRes.data || [])
-        setBorrow(borRes.data || [])
-        setSalaryData(salRes.data || [])
+                    axios.get(
+                        'https://expense-backend-5myt.onrender.com/api/saving/list',
+                        { headers },
+                    ),
 
-    } catch (error) {
-        console.log(
-            'Dashboard fetch error',
-            error,
+                    axios.get(
+                        'https://expense-backend-5myt.onrender.com/api/borrow-lend/list',
+                        { headers },
+                    ),
+
+                    axios.get(
+                        'https://expense-backend-5myt.onrender.com/api/salary/list',
+                        { headers },
+                    ),
+                ],
+            )
+
+        setExpenses(
+            results[0].status ===
+                'fulfilled'
+                ? results[0].value
+                      .data || []
+                : [],
         )
+
+        setSavings(
+            results[1].status ===
+                'fulfilled'
+                ? results[1].value
+                      .data || []
+                : [],
+        )
+
+        setBorrow(
+            results[2].status ===
+                'fulfilled'
+                ? results[2].value
+                      .data || []
+                : [],
+        )
+
+        setSalaryData(
+            results[3].status ===
+                'fulfilled'
+                ? results[3].value
+                      .data || []
+                : [],
+        )
+    } catch (error: any) {
+        if (
+            error?.response
+                ?.status ===
+            401
+        ) {
+            toast.push(
+                <Notification
+                    title="Session Expired"
+                    type="warning"
+                >
+                    Please login again.
+                </Notification>,
+            )
+
+            navigate(
+                '/sign-in',
+            )
+        } else {
+            console.log(
+                'Dashboard fetch error',
+                error,
+            )
+        }
     } finally {
         setLoading(false)
     }
 }
-    useEffect(() => {
-    const savedToken =
+
+    // -------------------------
+    // 🔥 FIXED EFFECT
+    // -------------------------
+
+useEffect(() => {
+    if (!hydrated) return
+
+    const authToken =
         token ||
         localStorage.getItem(
             'token',
         )
 
-    if (savedToken) {
-        fetchData()
+    if (
+        !signedIn ||
+        !authToken
+    ) {
+        localStorage.removeItem(
+            'token',
+        )
+
+        localStorage.removeItem(
+            'sessionUser',
+        )
+
+        toast.push(
+            <Notification
+                title="Session Expired"
+                type="warning"
+            >
+                Please login again.
+            </Notification>,
+        )
+
+        navigate(
+            '/sign-in',
+        )
+
+        return
     }
-}, [token])
+
+    fetchData()
+}, [
+    hydrated,
+    signedIn,
+    token,
+])
+
+
+
+
 
 
 const filterByMonth =
