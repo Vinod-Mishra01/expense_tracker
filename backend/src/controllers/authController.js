@@ -5,9 +5,7 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const crypto = require('crypto')
 const nodemailer = require('nodemailer')
-const dns = require('dns')
 
-dns.setDefaultResultOrder('ipv4first')
 
 /* ================= REGISTER ================= */
 exports.register =
@@ -433,17 +431,16 @@ exports.forgotPassword = async (
 
 const transporter =
 nodemailer.createTransport({
-    host: 'smtp.gmail.com',
+    host: 'smtp-relay.brevo.com',
     port: 587,
     secure: false,
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
     },
-    tls: {
-        rejectUnauthorized: false,
-    },
 })
+
+
 
         await transporter.sendMail({
             from: process
