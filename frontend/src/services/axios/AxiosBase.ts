@@ -27,3 +27,49 @@ AxiosBase.interceptors.response.use(
 )
 
 export default AxiosBase
+
+
+// import type { AxiosError } from 'axios'
+// import { toast } from 'react-toastify'
+
+// let isSessionExpired = false
+
+// const AxiosResponseIntrceptorErrorCallback = (
+//     error: AxiosError,
+// ) => {
+//     const status =
+//         error.response?.status
+
+//     if (
+//         status === 401 &&
+//         !isSessionExpired
+//     ) {
+//         isSessionExpired = true
+
+//         localStorage.removeItem(
+//             'sessionUser',
+//         )
+
+//         localStorage.removeItem(
+//             'accessToken',
+//         )
+
+//         toast.warning(
+//             'Session Expired. Please login again.',
+//         )
+
+//         setTimeout(() => {
+//             window.location.href =
+//                 '/sign-in'
+//         }, 800)
+//     }
+
+//     return Promise.reject(error)
+// }
+
+// export const resetSessionExpiredFlag =
+//     () => {
+//         isSessionExpired = false
+//     }
+
+// export default AxiosResponseIntrceptorErrorCallback

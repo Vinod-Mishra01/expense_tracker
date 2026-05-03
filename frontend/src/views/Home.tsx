@@ -8,6 +8,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import axios from 'axios'
+import { useRef } from 'react'
 import Container from '@/components/shared/Container'
 import Loading from '@/components/shared/Loading'
 import Card from '@/components/ui/Card'
@@ -29,6 +30,11 @@ import {
 const Home = () => {
     const navigate =
         useNavigate()
+
+
+const redirected =
+    useRef(false)
+
 
     const { token } =
         useToken()
@@ -180,33 +186,44 @@ const Home = () => {
                       .data || []
                 : [],
         )
-    } catch (error: any) {
-        if (
-            error?.response
-                ?.status ===
-            401
-        ) {
-            toast.push(
-                <Notification
-                    title="Session Expired"
-                    type="warning"
-                >
-                    Please login again.
-                </Notification>,
-            )
-
-            navigate(
-                '/sign-in',
-            )
-        } else {
-            console.log(
-                'Dashboard fetch error',
-                error,
-            )
-        }
-    } finally {
-        setLoading(false)
     }
+    
+    
+   catch (error: any) {
+    if (
+        error?.response
+            ?.status ===
+        401
+    ) {
+        localStorage.removeItem(
+            'token',
+        )
+
+        localStorage.removeItem(
+            'sessionUser',
+        )
+
+        toast.push(
+            <Notification
+                title="Session Expired"
+                type="warning"
+            >
+                Please login again.
+            </Notification>,
+        )
+
+        navigate(
+            '/sign-in',
+        )
+    } else {
+        console.log(
+            'Dashboard fetch error',
+            error,
+        )
+    }
+} finally {
+    setLoading(false)
+}
 }
 
     // -------------------------
@@ -222,10 +239,13 @@ useEffect(() => {
             'token',
         )
 
-    if (
-        !signedIn ||
-        !authToken
-    ) {
+    if (!authToken || !signedIn) {
+        if (redirected.current)
+            return
+
+        redirected.current =
+            true
+
         localStorage.removeItem(
             'token',
         )
