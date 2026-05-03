@@ -5,6 +5,9 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const crypto = require('crypto')
 const nodemailer = require('nodemailer')
+const dns = require('dns')
+
+dns.setDefaultResultOrder('ipv4first')
 
 /* ================= REGISTER ================= */
 exports.register =
@@ -426,6 +429,8 @@ exports.forgotPassword = async (
         //         },
         //     })
 
+
+
 const transporter =
 nodemailer.createTransport({
     host: 'smtp.gmail.com',
@@ -438,9 +443,6 @@ nodemailer.createTransport({
     tls: {
         rejectUnauthorized: false,
     },
-    connectionTimeout: 10000,
-    greetingTimeout: 10000,
-    socketTimeout: 10000,
 })
 
         await transporter.sendMail({
