@@ -6,7 +6,7 @@ const Salary = require('../models/Salary')
 const BorrowLend = require('../models/BorrowLend')
 
 const groq = new Groq({
-    apiKey: process.env.GROQ_API_KEY,
+    apiKey: process.env.GEMINI_API_KEY,
 })
 
 const months = {

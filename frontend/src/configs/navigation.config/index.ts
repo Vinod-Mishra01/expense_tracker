@@ -153,6 +153,37 @@ const navigationConfig: NavigationTree[] = [
                 ],
             },
 
+            {
+    key: 'notes',
+    path: '',
+    title: 'Notes',
+    translateKey: 'nav.notes',
+    icon: 'notes',
+    type: NAV_ITEM_TYPE_COLLAPSE,
+    authority: [],
+    subMenu: [
+        {
+            key: 'addNote',
+            path: '/add-note',
+            title: 'Add Note',
+            translateKey: 'nav.addNote',
+            icon: '',
+            type: NAV_ITEM_TYPE_ITEM,
+            authority: [],
+            subMenu: [],
+        },
+        {
+            key: 'viewNotes',
+            path: '/view-notes',
+            title: 'View Notes',
+            translateKey: 'nav.viewNotes',
+            icon: '',
+            type: NAV_ITEM_TYPE_ITEM,
+            authority: [],
+            subMenu: [],
+        },
+    ],
+},
 // AI LABEL
 {
     key: 'aiLabel',

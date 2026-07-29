@@ -61,6 +61,21 @@ export const protectedRoutes: Routes = [
         component: lazy(() => import('@/views/ViewBorrowLend')),
         authority: [],
     },
+
+
+    // Notes
+{
+    key: 'note.add',
+    path: '/add-note',
+    component: lazy(() => import('@/views/AddNote')),
+    authority: [],
+},
+{
+    key: 'note.view',
+    path: '/view-notes',
+    component: lazy(() => import('@/views/ViewNotes')),
+    authority: [],
+},
 {
     key: 'notifications',
     path: '/notifications',

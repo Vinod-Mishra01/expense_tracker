@@ -9,6 +9,7 @@ const savingRoutes = require('./routes/savingRoutes')
 const borrowLendRoutes = require('./routes/borrowLendRoutes')
 const salaryRoutes = require('./routes/salaryRoutes')
 const aiRoutes = require('./routes/aiRoutes')
+const noteRoutes = require('./routes/noteRoutes')
 const authMiddleware = require('./middleware/authMiddleware')
 
 const connectDb = require('./config/db')
@@ -32,6 +33,8 @@ app.use('/api/salary', salaryRoutes)
 app.use('/api/ai', aiRoutes)
 
 
+app.use('/api/note', noteRoutes)
+
 
 app.get('/', (req, res) => {
     res.send('Personal Expense Tracker API Running')
@@ -49,3 +52,7 @@ const PORT = process.env.PORT || 5000
 app.listen(PORT, () => {
     console.log(`server is running on port ${PORT}`)
 })
+
+
+
+
