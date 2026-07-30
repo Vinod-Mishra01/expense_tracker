@@ -98,8 +98,8 @@ const quickFilterOptions = [
             setLoading(true)
 
             const res: any = await axios.get(
-                // 'https://expense-backend-5myt.onrender.com/api/note/list',
-                'http://localhost:5000/api/note/list',
+                'https://expense-backend-5myt.onrender.com/api/note/list',
+                // 'http://localhost:5000/api/note/list',
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -299,8 +299,8 @@ if (selectedDate) {
         const deleteNote = async () => {
         try {
             await axios.delete(
-                // `https://expense-backend-5myt.onrender.com/api/note/delete/${deleteId}`,
-                `http://localhost:5000/api/note/delete/${deleteId}`,
+                `https://expense-backend-5myt.onrender.com/api/note/delete/${deleteId}`,
+                // `http://localhost:5000/api/note/delete/${deleteId}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -334,8 +334,8 @@ if (selectedDate) {
     const updateNote = async () => {
         try {
             await axios.put(
-                // `https://expense-backend-5myt.onrender.com/api/note/update/${editData._id}`,
-                   `http://localhost:5000/api/note/update/${editData._id}`,
+                `https://expense-backend-5myt.onrender.com/api/note/update/${editData._id}`,
+                //    `http://localhost:5000/api/note/update/${editData._id}`,
                 {
                     title: editData.title,
                     description: editData.description,
