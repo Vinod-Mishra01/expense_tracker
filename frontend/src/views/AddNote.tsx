@@ -75,8 +75,8 @@ const AddNote = () => {
             setLoading(true)
 
             await axios.post(
-                'https://expense-backend-5myt.onrender.com/api/note/create',
-                // 'http://localhost:5000/api/note/create',
+                // 'https://expense-backend-5myt.onrender.com/api/note/create',
+                'http://localhost:5000/api/note/create',
                 {
                     title: formData.title,
                     description: formData.description,

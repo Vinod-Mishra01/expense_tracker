@@ -10,7 +10,7 @@ import Select from '@/components/ui/Select'
 import Dialog from '@/components/ui/Dialog'
 import Notification from '@/components/ui/Notification'
 import toast from '@/components/ui/toast'
-
+import { TbDownload } from 'react-icons/tb'
 import { useRef } from 'react'
 import { FiPlus } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
@@ -23,6 +23,7 @@ import {
     PiPushPinSimpleDuotone,
     PiMagnifyingGlassDuotone,
     PiImageSquareDuotone,
+        PiEyeDuotone,
 } from 'react-icons/pi'
 
 import { FormItem } from '@/components/ui'
@@ -61,7 +62,9 @@ const ViewNotes = () => {
     const exportRef = useRef<HTMLDivElement>(null)
 
 const [previewNote, setPreviewNote] = useState<NoteType | null>(null)
-
+const [viewNote, setViewNote] = useState<NoteType | null>(null)
+const [currentPage, setCurrentPage] = useState(1)
+const [pageSize, setPageSize] = useState(11)
 
 
 const [quickFilter, setQuickFilter] = useState('all')
@@ -95,8 +98,8 @@ const quickFilterOptions = [
             setLoading(true)
 
             const res: any = await axios.get(
-                'https://expense-backend-5myt.onrender.com/api/note/list',
-                // 'http://localhost:5000/api/note/list',
+                // 'https://expense-backend-5myt.onrender.com/api/note/list',
+                'http://localhost:5000/api/note/list',
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -258,22 +261,22 @@ if (selectedDate) {
 
 
 
-    useEffect(() => {
-        if (!search) {
-            setFilteredNotes(notes)
-            return
-        }
+    // useEffect(() => {
+    //     if (!search) {
+    //         setFilteredNotes(notes)
+    //         return
+    //     }
 
-        const keyword = search.toLowerCase()
+    //     const keyword = search.toLowerCase()
 
-        setFilteredNotes(
-            notes.filter(
-                (note) =>
-                    note.title.toLowerCase().includes(keyword) ||
-                    note.description.toLowerCase().includes(keyword),
-            ),
-        )
-    }, [search, notes])
+    //     setFilteredNotes(
+    //         notes.filter(
+    //             (note) =>
+    //                 note.title.toLowerCase().includes(keyword) ||
+    //                 note.description.toLowerCase().includes(keyword),
+    //         ),
+    //     )
+    // }, [search, notes])
 
     const openDelete = (id: string) => {
         setDeleteId(id)
@@ -296,8 +299,8 @@ if (selectedDate) {
         const deleteNote = async () => {
         try {
             await axios.delete(
-                `https://expense-backend-5myt.onrender.com/api/note/delete/${deleteId}`,
-                // `http://localhost:5000/api/note/delete/${deleteId}`,
+                // `https://expense-backend-5myt.onrender.com/api/note/delete/${deleteId}`,
+                `http://localhost:5000/api/note/delete/${deleteId}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -331,8 +334,8 @@ if (selectedDate) {
     const updateNote = async () => {
         try {
             await axios.put(
-                `https://expense-backend-5myt.onrender.com/api/note/update/${editData._id}`,
-                //    `http://localhost:5000/api/note/update/${editData._id}`,
+                // `https://expense-backend-5myt.onrender.com/api/note/update/${editData._id}`,
+                   `http://localhost:5000/api/note/update/${editData._id}`,
                 {
                     title: editData.title,
                     description: editData.description,
@@ -372,7 +375,15 @@ if (selectedDate) {
             )
         }
     }
+const totalNotes = filteredNotes.length
 
+const totalPages = Math.ceil(totalNotes / pageSize)
+
+const startIndex = (currentPage - 1) * pageSize
+
+const endIndex = startIndex + pageSize
+
+const currentNotes = filteredNotes.slice(startIndex, endIndex)
 
 
 const navigate = useNavigate();
@@ -468,116 +479,151 @@ return (
         ) : (
             <>
                 {filteredNotes.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+            <>
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
 
-                        {filteredNotes.map((note) => (
+                    {currentNotes.map((note) => (
 
+                        <Card
+                            key={note._id}
+                            bodyClass="p-5"
+                            style={{
+                                background: note.color,
+                            }}
+                        >
+                            <div className="flex justify-between items-start">
 
+                                <div className="flex items-center gap-2">
+                                    <PiNoteDuotone size={20} />
 
-                            <Card 
-                                key={note._id}
-                                bodyClass="p-5"
+                                    <h5 className="font-semibold">
+                                        {note.title}
+                                    </h5>
+                                </div>
+
+                                {note.isPinned && (
+                                    <PiPushPinSimpleDuotone size={18} />
+                                )}
+                            </div>
+
+                            <p
+                                className="mt-4 text-sm text-gray-700"
                                 style={{
-                                    background: note.color,
+                                    display: '-webkit-box',
+                                    WebkitLineClamp: 5,
+                                    WebkitBoxOrient: 'vertical',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    whiteSpace: 'pre-wrap',
+                                    minHeight: '64px',
                                 }}
                             >
-                                <div className="flex justify-between items-start">
+                                {note.description}
+                            </p>
 
-                                    <div className="flex items-center gap-2">
-                                        <PiNoteDuotone
-                                            size={20}
-                                        />
+                            <div className="flex justify-between items-center mt-6">
 
-                                        <h5 className="font-semibold">
-                                            {note.title}
-                                        </h5>
-                                    </div>
+                                <small>
+                                    {new Date(
+                                        note.createdAt,
+                                    ).toLocaleDateString()}
+                                </small>
 
-                                    {note.isPinned && (
-                                        <PiPushPinSimpleDuotone
-                                            size={18}
-                                        />
-                                    )}
+                                <div className="flex gap-2">
+
+                                    <Button
+                                        size="xs"
+                                        icon={<PiPencilSimpleDuotone />}
+                                        onClick={() => openEdit(note)}
+                                    />
+
+                                    <Button
+                                        size="xs"
+                                        variant="solid"
+                                        className="bg-red-500 hover:bg-red-600 text-white"
+                                        icon={<PiTrashDuotone />}
+                                        onClick={() => openDelete(note._id)}
+                                    />
+
+                                    <Button
+                                        size="xs"
+                                        icon={<PiEyeDuotone size={18} />}
+                                        onClick={() => setViewNote(note)}
+                                    />
+
+                                    <Button
+                                        size="xs"
+                                        variant="solid"
+                                        icon={<PiImageSquareDuotone size={18} />}
+                                        onClick={() => downloadImage(note)}
+                                    />
+
                                 </div>
+                            </div>
+                        </Card>
 
-                                <p className="mt-4 whitespace-pre-wrap text-sm">
-                                    {note.description}
-                                </p>
+                    ))}
 
-                                {/* {!!note.tags.length && (
-                                    <div className="flex flex-wrap gap-2 mt-4">
-                                        {note.tags.map((tag) => (
-                                            <span
-                                                key={tag}
-                                                className="px-2 py-1 rounded-full bg-black/10 text-xs"
-                                            >
-                                                {tag}
-                                            </span>
-                                        ))}
-                                    </div>
-                                )} */}
-
-                                <div className="flex justify-between items-center mt-6">
-
-                                    <small>
-                                        {new Date(
-                                            note.createdAt,
-                                        ).toLocaleDateString()}
-                                    </small>
-
-                                    <div className="flex gap-2">
-
-
-                                        <Button
-                                            size="sm"
-                                            icon={
-                                                <PiPencilSimpleDuotone />
-                                            }
-                                            onClick={() =>
-                                                openEdit(note)
-                                            }
-                                        >
-                                          
-                                        </Button>
-
-                                        <Button
-                                            size="sm"
-                                            variant="solid"
-                                            className="bg-red-500 hover:bg-red-600 text-white"
-                                            icon={
-                                                <PiTrashDuotone />
-                                            }
-                                            onClick={() =>
-                                                openDelete(note._id)
-                                            }
-                                        >
-                                        
-                                        </Button>
-
-                                        
-
-
-
-
-  <Button
-    size="sm"
-    variant="solid"
-    icon={<PiImageSquareDuotone size={18} />}
-onClick={() => downloadImage(note)}
->
-                                        
-                                        </Button>
-
-
-                                    </div>
-                                </div>
-                            </Card>
-
-
-
-
-                        ))}
                     </div>
+
+
+                      {filteredNotes.length > pageSize && (
+                    <div className="flex flex-col md:flex-row items-center justify-between gap-4 mt-8">
+
+                        <div className="text-sm text-gray-500">
+                            Showing {startIndex + 1} - {Math.min(endIndex, totalNotes)} of {totalNotes} Notes
+                        </div>
+
+                        <div className="flex items-center gap-2 flex-wrap">
+
+                            <select
+                                value={pageSize}
+                           onChange={(e) => {
+    setCurrentPage(1)
+    setPageSize(Number(e.target.value))
+}}
+                                className="border rounded px-2 py-1"
+                            >
+                                <option value={11}>11</option>
+                                <option value={20}>20</option>
+                                <option value={30}>30</option>
+                                <option value={50}>50</option>
+                                <option value={100}>100</option>
+                            </select>
+
+                            <Button
+                                size="xs"
+                                disabled={currentPage === 1}
+                                onClick={() => setCurrentPage((p) => p - 1)}
+                            >
+                                Prev
+                            </Button>
+
+                            {Array.from({ length: totalPages }, (_, index) => (
+                                <Button
+                                    key={index}
+                                    size="xs"
+                                    variant={currentPage === index + 1 ? 'solid' : 'default'}
+                                    onClick={() => setCurrentPage(index + 1)}
+                                >
+                                    {index + 1}
+                                </Button>
+                            ))}
+
+                            <Button
+                                size="xs"
+                                disabled={currentPage === totalPages}
+                                onClick={() => setCurrentPage((p) => p + 1)}
+                            >
+                                Next
+                            </Button>
+
+                        </div>
+
+                    </div>
+                )}
+
+                   </>
                     
                 ) : (
                     <Card bodyClass="py-16">
@@ -613,6 +659,13 @@ onClick={() => downloadImage(note)}
                         </div>
                     </Card>
                 )}
+
+
+
+
+
+
+
 
 
 
@@ -789,6 +842,91 @@ onClick={() => downloadImage(note)}
 
             </div>
         </Dialog>
+
+
+<Dialog
+    isOpen={!!viewNote}
+    onClose={() => setViewNote(null)}
+    onRequestClose={() => setViewNote(null)}
+>
+    <div className="1">
+
+        <div
+            className="rounded-2xl border overflow-hidden"
+            style={{
+                background: viewNote?.color || '#fff',
+            }}
+        >
+            {/* Header */}
+            <div className="p-6">
+
+                <div className="flex justify-between items-start">
+
+                    <h3 className="text-2xl font-bold break-words">
+                        {viewNote?.title}
+                    </h3>
+
+                    {viewNote?.isPinned && (
+                        <PiPushPinSimpleDuotone size={22} />
+                    )}
+
+                </div>
+
+                <p className="text-gray-500 mt-2">
+                    {viewNote &&
+                        new Date(viewNote.createdAt).toLocaleDateString()}
+                </p>
+
+            </div>
+
+            <div className="border-t" />
+
+            {/* Scroll Area */}
+            <div
+                className="overflow-y-auto px-6 py-5 whitespace-pre-wrap leading-8"
+                style={{
+                    maxHeight: 430,
+                }}
+            >
+                {viewNote?.description}
+            </div>
+
+        </div>
+
+        {/* Footer */}
+        <div className="flex justify-end gap-3 mt-6">
+
+            <Button
+                variant="default"
+                onClick={() => setViewNote(null)}
+            >
+                Close
+            </Button>
+
+            <Button
+                variant="solid"
+                icon={<TbDownload size={18} />}
+                onClick={() => {
+                    if (viewNote) {
+                        downloadImage(viewNote)
+                    }
+                }}
+            >
+                Download 
+            </Button>
+
+        </div>
+
+    </div>
+</Dialog>
+
+
+
+
+
+
+
+
 
         {/* Delete Dialog */}
         <Dialog

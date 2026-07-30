@@ -37,11 +37,11 @@ const Dialog = (props: DialogProps) => {
     const onCloseClick = (e: MouseEvent<HTMLSpanElement>) => {
         onClose?.(e)
     }
-
+// ltr:right-6 rtl:left-6 top-4.5
     const renderCloseButton = (
         <CloseButton
             absolute
-            className="ltr:right-6 rtl:left-6 top-4.5"
+            className="ltr:right-2 rtl:left-2 top-2"
             onClick={onCloseClick}
         />
     )
