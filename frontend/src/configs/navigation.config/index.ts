@@ -184,6 +184,40 @@ const navigationConfig: NavigationTree[] = [
         },
     ],
 },
+
+{
+    key: 'contacts',
+    path: '',
+    title: 'Contacts',
+    translateKey: 'nav.contacts',
+    icon: 'contacts',
+    type: NAV_ITEM_TYPE_COLLAPSE,
+    authority: [],
+    subMenu: [
+        {
+            key: 'addContact',
+            path: '/add-contact',
+            title: 'Add Contact',
+            translateKey: 'nav.addContact',
+            icon: '',
+            type: NAV_ITEM_TYPE_ITEM,
+            authority: [],
+            subMenu: [],
+        },
+        {
+            key: 'viewContacts',
+            path: '/view-contacts',
+            title: 'View Contacts',
+            translateKey: 'nav.viewContacts',
+            icon: '',
+            type: NAV_ITEM_TYPE_ITEM,
+            authority: [],
+            subMenu: [],
+        },
+    ],
+},
+
+
 // AI LABEL
 {
     key: 'aiLabel',

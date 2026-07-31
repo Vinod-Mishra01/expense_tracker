@@ -1,4 +1,4 @@
-import html2canvas from "html2canvas"
+import html2canvas from "html2canvas-pro"
 import { useEffect, useState } from 'react'
 
 
@@ -109,16 +109,21 @@ const quickFilterOptions = [
 
             setNotes(res.data)
             setFilteredNotes(res.data)
-        } catch (error) {
-            toast.push(
-                <Notification type="danger">
-                    Failed to load notes
-                </Notification>,
-                {
-                    placement: 'top-center',
-                },
-            )
-        } finally {
+        } catch (err: any) {
+    console.log("ERROR =>", err)
+    console.log("RESPONSE =>", err.response)
+    console.log("DATA =>", err.response?.data)
+    console.log("STATUS =>", err.response?.status)
+
+    toast.push(
+        <Notification
+            type="danger"
+            title="Error"
+        >
+            {err.response?.data?.message || err.message}
+        </Notification>,
+    )
+}finally {
             setLoading(false)
         }
     }

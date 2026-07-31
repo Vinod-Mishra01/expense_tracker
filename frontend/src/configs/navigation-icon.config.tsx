@@ -8,6 +8,7 @@ import {
     PiWalletDuotone,
     PiReceiptDuotone,
     PiNoteDuotone,
+    PiAddressBookDuotone,
 } from 'react-icons/pi'
 
 import type { JSX } from 'react'
@@ -24,6 +25,7 @@ const navigationIcon = {
     manageSalary: <PiWalletDuotone />,
     manageExpense: <PiReceiptDuotone />,
     notes: <PiNoteDuotone />,
+    contacts: <PiAddressBookDuotone />,
 }
 
 export default navigationIcon
