@@ -384,7 +384,7 @@ const handleVCFFileChange = async (
         formData.append('file', file)
 
         await AxiosBase.post(
-            '/contact/import-vcf',
+            'contact/import-vcf',
             formData,
             {
                 headers: {
