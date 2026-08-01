@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react'
 import { useParams } from 'react-router'
 import { useEffect } from 'react'
 import { useToken } from '@/store/authStore'
-import axios from 'axios'
+import AxiosBase from '@/services/axios/AxiosBase'
 
 import {
     Button,
@@ -273,7 +273,7 @@ const isEdit = !!id
 console.log('TOKEN =>', token)
 console.log('ACCESS TOKEN =>', localStorage.getItem('accessToken'))
           if (isEdit) {
-    await axios.put(
+    await AxiosBaseput(
         // `http://localhost:5000/api/contact/update/${id}`,
         `https://expense-backend-5myt.onrender.com/api/contact/update/${id}`,
         data,
@@ -294,7 +294,7 @@ console.log('ACCESS TOKEN =>', localStorage.getItem('accessToken'))
         },
     )
 } else {
-    await axios.post(
+    await AxiosBasepost(
         // 'http://localhost:5000/api/contact/create',
         'https://expense-backend-5myt.onrender.com/api/contact/create',
         data,
@@ -350,7 +350,7 @@ useEffect(() => {
 }, [id])
 const fetchContact = async () => {
     try {
-        const res = await axios.get(
+        const res = await AxiosBaseget(
             // `http://localhost:5000/api/contact/${id}`,
             `https://expense-backend-5myt.onrender.com/api/contact/${id}`,
             {

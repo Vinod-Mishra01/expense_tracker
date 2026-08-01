@@ -8,7 +8,8 @@
 // ✅ No feature removed
 
 import { useEffect, useMemo, useState } from 'react'
-import axios from 'axios'
+// import axios from 'axios'
+import AxiosBase from '@/services/axios/AxiosBase'
 import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
@@ -96,7 +97,7 @@ const Salary = () => {
     const loadData =
         async () => {
             const res =
-                await axios.get(
+                await AxiosBase.get(
                     'https://expense-backend-5myt.onrender.com/api/salary/list',
                     {
                         headers,
@@ -188,7 +189,7 @@ const Salary = () => {
             if (
                 editId
             ) {
-                await axios.put(
+                await AxiosBase.put(
                     `https://expense-backend-5myt.onrender.com/api/salary/update/${editId}`,
                     form,
                     {
@@ -196,7 +197,7 @@ const Salary = () => {
                     },
                 )
             } else {
-                await axios.post(
+                await AxiosBase.post(
                     'https://expense-backend-5myt.onrender.com/api/salary/create',
                     form,
                     {
@@ -213,7 +214,7 @@ const Salary = () => {
         async (
             id: string,
         ) => {
-            await axios.delete(
+            await AxiosBase.delete(
                 `https://expense-backend-5myt.onrender.com/api/salary/delete/${id}`,
                 {
                     headers,

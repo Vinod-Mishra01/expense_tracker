@@ -2,7 +2,8 @@
 import html2canvas from 'html2canvas-pro'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
+// import axios from 'axios'
+import AxiosBase from '@/services/axios/AxiosBase'
 import dayjs from 'dayjs'
 import { useToken } from '@/store/authStore'
 import Card from '@/components/ui/Card'
@@ -127,7 +128,7 @@ const ViewContacts = () => {
         try {
             setLoading(true)
 
-            const res = await axios.get(`${API_URL}/list`, {
+            const res = await AxiosBase.get(`${API_URL}/list`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -157,7 +158,7 @@ const ViewContacts = () => {
 
     const deleteContact = async () => {
         try {
-            await axios.delete(`${API_URL}/delete/${deleteId}`, {
+            await AxiosBase.delete(`${API_URL}/delete/${deleteId}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -191,7 +192,7 @@ const ViewContacts = () => {
 
     const toggleFavorite = async (id: string) => {
         try {
-            await axios.patch(
+            await AxiosBase.patch(
                 `${API_URL}/favorite/${id}`,
                 {},
                 {

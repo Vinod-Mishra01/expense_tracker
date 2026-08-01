@@ -7,7 +7,8 @@ import { Form, FormItem } from '@/components/ui/Form'
 import Notification from '@/components/ui/Notification'
 import toast from '@/components/ui/toast'
 import { useToken } from '@/store/authStore'
-import axios from 'axios'
+// import axios from 'axios'
+import AxiosBase from '@/services/axios/AxiosBase'
 
 const noteColors = [
     '#FFFFFF',
@@ -74,7 +75,7 @@ const AddNote = () => {
 
             setLoading(true)
 
-            await axios.post(
+            await AxiosBase.post(
                 'https://expense-backend-5myt.onrender.com/api/note/create',
                 // 'http://localhost:5000/api/note/create',
                 {

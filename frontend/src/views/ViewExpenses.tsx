@@ -9,7 +9,8 @@ import Notification from '@/components/ui/Notification'
 import toast from '@/components/ui/toast'
 import DataTable from '@/components/shared/DataTable'
 import { useToken } from '@/store/authStore'
-import axios from 'axios'
+// import axios from 'axios'
+import AxiosBase from '@/services/axios/AxiosBase'
 import {
     TbPlus,
     TbSearch,
@@ -86,7 +87,7 @@ const ViewExpenses = () => {
         try {
             setLoading(true)
 
-            const res = await axios.get(
+            const res = await AxiosBase.get(
                 'https://expense-backend-5myt.onrender.com/api/expense/list',
                 {
                     headers: {
@@ -114,7 +115,7 @@ const ViewExpenses = () => {
 
     const handleDelete = async (id: string) => {
         try {
-            await axios.delete(
+            await AxiosBase.delete(
                 `https://expense-backend-5myt.onrender.com/api/expense/delete/${id}`,
                 {
                     headers: {
@@ -151,7 +152,7 @@ const ViewExpenses = () => {
 
     const handleUpdate = async () => {
         try {
-            await axios.put(
+            await AxiosBase.put(
                 `https://expense-backend-5myt.onrender.com/api/expense/update/${editData._id}`,
                 editData,
                 {

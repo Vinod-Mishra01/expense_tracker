@@ -11,7 +11,8 @@ import Notification from '@/components/ui/Notification'
 import toast from '@/components/ui/toast'
 import DataTable from '@/components/shared/DataTable'
 import { useToken } from '@/store/authStore'
-import axios from 'axios'
+// import axios from 'axios'
+import AxiosBase from '@/services/axios/AxiosBase'
 import {
     TbPlus,
     TbSearch,
@@ -81,7 +82,7 @@ const ViewSavings = () => {
         try {
             setLoading(true)
 
-            const res = await axios.get(
+            const res = await AxiosBase.get(
                 'https://expense-backend-5myt.onrender.com/api/saving/list',
                 {
                     headers: {
@@ -116,7 +117,7 @@ const ViewSavings = () => {
         id: string,
     ) => {
         try {
-            await axios.delete(
+            await AxiosBase.delete(
                 `https://expense-backend-5myt.onrender.com/api/saving/delete/${id}`,
                 {
                     headers: {
@@ -165,7 +166,7 @@ const ViewSavings = () => {
 
     const handleUpdate = async () => {
         try {
-            await axios.put(
+            await AxiosBase.put(
                 `https://expense-backend-5myt.onrender.com/api/saving/update/${editData._id}`,
                 {
                     title:

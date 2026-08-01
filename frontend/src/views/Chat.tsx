@@ -37,7 +37,7 @@ const Chat = () => {
         setLoading(true)
 
         try {
-            const res = await axios.post(
+            const res = await AxiosBase.post(
                 'https://expense-backend-5myt.onrender.com/api/ai/chat',
                 {
                     message: userText,

@@ -12,7 +12,8 @@ import Notification from '@/components/ui/Notification'
 import toast from '@/components/ui/toast'
 import DataTable from '@/components/shared/DataTable'
 import { useToken } from '@/store/authStore'
-import axios from 'axios'
+// import axios from 'axios'
+import AxiosBase from '@/services/axios/AxiosBase'
 import {
     TbPlus,
     TbSearch,
@@ -100,7 +101,7 @@ const [toDate, setToDate] =
         try {
             setLoading(true)
 
-            const res = await axios.get(
+            const res = await AxiosBase.get(
                 'https://expense-backend-5myt.onrender.com/api/borrow-lend/list',
                 {
                     headers: {
@@ -129,7 +130,7 @@ const [toDate, setToDate] =
     const handleDelete = async (
         id: string,
     ) => {
-        await axios.delete(
+        await AxiosBase.delete(
             `https://expense-backend-5myt.onrender.com/api/borrow-lend/delete/${id}`,
             {
                 headers: {
@@ -161,7 +162,7 @@ const [toDate, setToDate] =
     }
 
     const handleUpdate = async () => {
-        await axios.put(
+        await AxiosBase.put(
             `https://expense-backend-5myt.onrender.com/api/borrow-lend/update/${editData._id}`,
             {
                 ...editData,

@@ -15,7 +15,8 @@ import { useRef } from 'react'
 import { FiPlus } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { useToken } from '@/store/authStore'
-import axios from 'axios'
+// import axios from 'axios'
+import AxiosBase from '@/services/axios/AxiosBase'
 import {
     PiNoteDuotone,
     PiPencilSimpleDuotone,
@@ -97,7 +98,7 @@ const quickFilterOptions = [
         try {
             setLoading(true)
 
-            const res: any = await axios.get(
+            const res: any = await AxiosBase.get(
                 'https://expense-backend-5myt.onrender.com/api/note/list',
                 // 'http://localhost:5000/api/note/list',
                 {
@@ -303,7 +304,7 @@ if (selectedDate) {
 
         const deleteNote = async () => {
         try {
-            await axios.delete(
+            await AxiosBase.delete(
                 `https://expense-backend-5myt.onrender.com/api/note/delete/${deleteId}`,
                 // `http://localhost:5000/api/note/delete/${deleteId}`,
                 {
@@ -338,7 +339,7 @@ if (selectedDate) {
 
     const updateNote = async () => {
         try {
-            await axios.put(
+            await AxiosBase.put(
                 `https://expense-backend-5myt.onrender.com/api/note/update/${editData._id}`,
                 //    `http://localhost:5000/api/note/update/${editData._id}`,
                 {

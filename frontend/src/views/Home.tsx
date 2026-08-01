@@ -7,7 +7,8 @@
 // ✅ Charts kept
 
 import { useEffect, useMemo, useState } from 'react'
-import axios from 'axios'
+// import axios from 'axios'
+import AxiosBase from '@/services/axios/AxiosBase'
 import { useRef } from 'react'
 import Container from '@/components/shared/Container'
 import Loading from '@/components/shared/Loading'
@@ -133,22 +134,22 @@ const redirected =
         const results =
             await Promise.allSettled(
                 [
-                    axios.get(
+                    AxiosBase.get(
                         'https://expense-backend-5myt.onrender.com/api/expense/list',
                         { headers },
                     ),
 
-                    axios.get(
+                    AxiosBase.get(
                         'https://expense-backend-5myt.onrender.com/api/saving/list',
                         { headers },
                     ),
 
-                    axios.get(
+                    AxiosBase.get(
                         'https://expense-backend-5myt.onrender.com/api/borrow-lend/list',
                         { headers },
                     ),
 
-                    axios.get(
+                    AxiosBase.get(
                         'https://expense-backend-5myt.onrender.com/api/salary/list',
                         { headers },
                     ),

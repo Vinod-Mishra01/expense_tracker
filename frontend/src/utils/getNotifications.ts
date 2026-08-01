@@ -7,10 +7,10 @@ export const getNotifications = async (authToken: string) => {
 
     const [expRes, savRes, borRes, salRes] =
         await Promise.all([
-      axios.get('https://expense-backend-5myt.onrender.com/api/expense/list', { headers }),
-        axios.get('https://expense-backend-5myt.onrender.com/api/saving/list', { headers }),
-axios.get('https://expense-backend-5myt.onrender.com/api/borrow-lend/list', { headers }),
-axios.get('https://expense-backend-5myt.onrender.com/api/salary/list', { headers })
+      AxiosBaseget('https://expense-backend-5myt.onrender.com/api/expense/list', { headers }),
+        AxiosBaseget('https://expense-backend-5myt.onrender.com/api/saving/list', { headers }),
+AxiosBaseget('https://expense-backend-5myt.onrender.com/api/borrow-lend/list', { headers }),
+AxiosBaseget('https://expense-backend-5myt.onrender.com/api/salary/list', { headers })
         ])
 
     const expenses = expRes.data || []
