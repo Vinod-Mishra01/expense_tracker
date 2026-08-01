@@ -10,7 +10,8 @@ import { Form, FormItem } from '@/components/ui/Form'
 import Notification from '@/components/ui/Notification'
 import toast from '@/components/ui/toast'
 import { useToken } from '@/store/authStore'
-import axios from 'axios'
+// import axios from 'axios'
+import AxiosBase from '@/services/axios/AxiosBase'
 
 const typeOptions = [
     { label: 'Borrow', value: 'Borrow' },
@@ -74,7 +75,7 @@ const BorrowLend = () => {
         try {
             setLoading(true)
 
-            await AxiosBasepost(
+            await AxiosBase.post(
                 'https://expense-backend-5myt.onrender.com/api/borrow-lend/create',
                 {
                     ...formData,
