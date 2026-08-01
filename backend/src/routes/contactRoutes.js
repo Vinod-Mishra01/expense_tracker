@@ -2,6 +2,7 @@ const express = require('express')
 const multer = require('multer')
 const fs = require('fs')
 const path = require('path')
+// const vCardParser = require('vcard-parser')
 
 const {
     createContact,
@@ -10,6 +11,7 @@ const {
     updateContact,
     deleteContact,
     toggleFavorite,
+        importVCF,
 } = require('../controllers/contactController')
 
 const protect = require('../middleware/authMiddleware')
@@ -69,7 +71,7 @@ router.get(
     '/list',
     protect,
     getContacts,
-)
+) 
 
 router.get(
     '/:id',
@@ -94,6 +96,18 @@ router.patch(
     '/favorite/:id',
     protect,
     toggleFavorite,
+)
+
+
+router.post(
+    '/import-vcf',
+    (req, res, next) => {
+        console.log('✅ ROUTE HIT');
+        next();
+    },
+    protect,
+    upload.single('file'),
+    importVCF,
 )
 
 module.exports = router

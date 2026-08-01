@@ -1,6 +1,6 @@
 // import html2canvas from 'html2canvas'
 import html2canvas from 'html2canvas-pro'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 // import axios from 'axios'
 import AxiosBase from '@/services/axios/AxiosBase'
@@ -13,6 +13,7 @@ import Select from '@/components/ui/Select'
 import Avatar from '@/components/ui/Avatar'
 import Dialog from '@/components/ui/Dialog'
 import toast from '@/components/ui/toast'
+import { TbUpload } from 'react-icons/tb'
 import Notification from '@/components/ui/Notification'
 import Pagination from '@/components/ui/Pagination'
 
@@ -29,8 +30,7 @@ import {
 } from 'react-icons/tb'
 
 // const API_URL = 'http://localhost:5000/api/contact'
-const API_URL =
-    'https://expense-backend-5myt.onrender.com/api/contact'
+const API_URL = 'https://expense-backend-5myt.onrender.com/api/contact'
 
 type PhoneType = {
     label: string
@@ -114,6 +114,7 @@ const ViewContacts = () => {
     const [deleteId, setDeleteId] = useState('')
 
     const [currentPage, setCurrentPage] = useState(1)
+    const fileInputRef = useRef<HTMLInputElement>(null)
 
     const pageSize = 10
 
@@ -364,6 +365,68 @@ END:VCARD
         window.URL.revokeObjectURL(url)
     }
 
+
+
+
+const handleImportVCF = () => {
+    fileInputRef.current?.click()
+}
+
+const handleVCFFileChange = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+) => {
+    const file = e.target.files?.[0]
+
+    if (!file) return
+
+    try {
+        const formData = new FormData()
+        formData.append('file', file)
+
+        await AxiosBase.post(
+            '/contact/import-vcf',
+            formData,
+            {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            },
+        )
+
+        toast.push(
+            <Notification
+                type="success"
+                title="Success"
+            >
+                Contacts imported successfully.
+            </Notification>,
+            {
+                placement: 'top-center',
+            },
+        )
+
+        // Refresh table
+        fetchContacts()
+
+        // Reset input
+        e.target.value = ''
+    } catch (err) {
+        console.error(err)
+
+        toast.push(
+            <Notification
+                type="danger"
+                title="Error"
+            >
+                Failed to import contacts.
+            </Notification>,
+            {
+                placement: 'top-center',
+            },
+        )
+    }
+}
+
     const filteredContacts = useMemo(() => {
         let data = [...contacts]
 
@@ -470,14 +533,29 @@ const emails = (
                         </p>
                     </div>
 
-                    <Button
+                    {/* <Button
                         variant="solid"
                         icon={<TbPlus />}
                         onClick={() => navigate('/add-contact')}
                     >
                         Add Contact
-                    </Button>
+                    </Button> */}
 
+<Button
+    variant="default"
+    icon={<TbUpload />}
+    onClick={handleImportVCF}
+>
+    Import VCF
+</Button>
+
+<input
+    ref={fileInputRef}
+    type="file"
+    accept=".vcf"
+    className="hidden"
+    onChange={handleVCFFileChange}
+/>
                 </div>
 
                 {/* Filters */}

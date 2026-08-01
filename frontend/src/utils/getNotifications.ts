@@ -1,4 +1,6 @@
-import axios from 'axios'
+// import axios from 'axios'
+
+import AxiosBase from '@/services/axios/AxiosBase'
 
 export const getNotifications = async (authToken: string) => {
     const headers = {
@@ -7,10 +9,10 @@ export const getNotifications = async (authToken: string) => {
 
     const [expRes, savRes, borRes, salRes] =
         await Promise.all([
-      AxiosBaseget('https://expense-backend-5myt.onrender.com/api/expense/list', { headers }),
-        AxiosBaseget('https://expense-backend-5myt.onrender.com/api/saving/list', { headers }),
-AxiosBaseget('https://expense-backend-5myt.onrender.com/api/borrow-lend/list', { headers }),
-AxiosBaseget('https://expense-backend-5myt.onrender.com/api/salary/list', { headers })
+      AxiosBase.get('https://expense-backend-5myt.onrender.com/api/expense/list', { headers }),
+        AxiosBase.get('https://expense-backend-5myt.onrender.com/api/saving/list', { headers }),
+AxiosBase.get('https://expense-backend-5myt.onrender.com/api/borrow-lend/list', { headers }),
+AxiosBase.get('https://expense-backend-5myt.onrender.com/api/salary/list', { headers })
         ])
 
     const expenses = expRes.data || []

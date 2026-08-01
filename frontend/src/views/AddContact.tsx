@@ -273,7 +273,7 @@ const isEdit = !!id
 console.log('TOKEN =>', token)
 console.log('ACCESS TOKEN =>', localStorage.getItem('accessToken'))
           if (isEdit) {
-    await AxiosBaseput(
+    await AxiosBase.put(
         // `http://localhost:5000/api/contact/update/${id}`,
         `https://expense-backend-5myt.onrender.com/api/contact/update/${id}`,
         data,
@@ -294,7 +294,7 @@ console.log('ACCESS TOKEN =>', localStorage.getItem('accessToken'))
         },
     )
 } else {
-    await AxiosBasepost(
+    await AxiosBase.post(
         // 'http://localhost:5000/api/contact/create',
         'https://expense-backend-5myt.onrender.com/api/contact/create',
         data,
@@ -350,9 +350,9 @@ useEffect(() => {
 }, [id])
 const fetchContact = async () => {
     try {
-        const res = await AxiosBaseget(
-            // `http://localhost:5000/api/contact/${id}`,
-            `https://expense-backend-5myt.onrender.com/api/contact/${id}`,
+        const res = await AxiosBase.get(
+            `http://localhost:5000/api/contact/${id}`,
+            // `https://expense-backend-5myt.onrender.com/api/contact/${id}`,
             {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -378,8 +378,8 @@ const fetchContact = async () => {
 
         if (contact.photo) {
             setPreview(
-                // `http://localhost:5000/uploads/contacts/${contact.photo}`,
-                `https://expense-backend-5myt.onrender.com/uploads/contacts/${contact.photo}`,
+                `http://localhost:5000/uploads/contacts/${contact.photo}`,
+                // `https://expense-backend-5myt.onrender.com/uploads/contacts/${contact.photo}`,
             )
         }
     } catch (err) {
