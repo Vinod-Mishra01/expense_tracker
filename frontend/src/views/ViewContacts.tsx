@@ -427,6 +427,11 @@ const handleVCFFileChange = async (
     }
 }
 
+
+
+
+
+
     const filteredContacts = useMemo(() => {
         let data = [...contacts]
 
@@ -606,7 +611,7 @@ const emails = (
                         icon={<TbDownload />}
                         onClick={exportAllContacts}
                     >
-                        Export Contacts
+                        Export 
                     </Button>
 
                 </div>
