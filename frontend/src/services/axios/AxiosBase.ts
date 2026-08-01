@@ -28,7 +28,6 @@ AxiosBase.interceptors.response.use(
 
 export default AxiosBase
 
-
 // import type { AxiosError } from 'axios'
 // import { toast } from 'react-toastify'
 
