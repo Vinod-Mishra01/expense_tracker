@@ -424,14 +424,96 @@ const deleteSelectedContacts = async () => {
 
 
 
-
 const favoriteSelectedContacts = async () => {
-    console.log(selectedContacts)
+    try {
+        await AxiosBase.patch(
+            `${API_URL}/favorite-multiple`,
+            {
+                ids: selectedContacts,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            },
+        )
+
+        toast.push(
+            <Notification
+                type="success"
+                title="Success"
+            >
+                Contacts updated successfully.
+            </Notification>,
+        )
+
+        setSelectedContacts([])
+
+        fetchContacts()
+    } catch (err) {
+        console.error(err)
+
+        toast.push(
+            <Notification
+                type="danger"
+                title="Error"
+            >
+                Failed to update contacts.
+            </Notification>,
+        )
+    }
 }
 
-const exportSelectedContacts = () => {
-    console.log(selectedContacts)
+const exportSelectedContacts = async () => {
+    try {
+        const response = await AxiosBase.post(
+            `${API_URL}/export-selected`,
+            {
+                ids: selectedContacts,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                responseType: 'blob',
+            },
+        )
+
+        const url = window.URL.createObjectURL(
+            new Blob([response.data]),
+        )
+
+        const link = document.createElement('a')
+
+        link.href = url
+
+        link.setAttribute(
+            'download',
+            'selected-contacts.vcf',
+        )
+
+        document.body.appendChild(link)
+
+        link.click()
+
+        link.remove()
+
+        window.URL.revokeObjectURL(url)
+    } catch (err) {
+        console.error(err)
+
+        toast.push(
+            <Notification
+                type="danger"
+                title="Error"
+            >
+                Failed to export contacts.
+            </Notification>,
+        )
+    }
 }
+
+
 
 const handleImportVCF = () => {
     fileInputRef.current?.click()
@@ -720,19 +802,20 @@ const paginatedContacts =
                     />
 
                     <Button
+                    className='Bg-red'
                         icon={<TbRefresh />}
                         onClick={resetFilters}
                     >
                         Reset
                     </Button>
 
-                     <Button
-                    variant="default"
-                    icon={<TbUpload />}
-                    onClick={handleImportVCF}
-                >
-                    Import VCF
-                </Button>
+               <Button
+    variant="solid"
+    icon={<TbDownload />}
+    onClick={exportAllContacts}
+>
+    Export All
+</Button>
 
                 </div>
 

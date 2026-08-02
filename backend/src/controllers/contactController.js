@@ -190,6 +190,41 @@ exports.toggleFavorite = async (req, res) => {
     }
 }
 
+// ================= BULK FAVORITE =================
+exports.favoriteMultipleContacts = async (req, res) => {
+    try {
+        const { ids } = req.body
+
+        if (!ids || !ids.length) {
+            return res.status(400).json({
+                success: false,
+                message: 'No contacts selected',
+            })
+        }
+
+        await Contact.updateMany(
+            {
+                _id: { $in: ids },
+                userId: req.user.id,
+            },
+            {
+                $set: {
+                    favorite: true,
+                },
+            },
+        )
+
+        res.status(200).json({
+            success: true,
+            message: 'Contacts updated successfully',
+        })
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            message: err.message,
+        })
+    }
+}
 
 // ================= BULK DELETE =================
 exports.deleteMultipleContacts = async (req, res) => {
