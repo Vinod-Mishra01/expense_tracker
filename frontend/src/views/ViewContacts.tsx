@@ -694,13 +694,13 @@ const emails = (
                         Reset
                     </Button>
 
-                    {/* <Button
+                    <Button
                         variant="solid"
                         icon={<TbDownload />}
                         onClick={exportAllContacts}
                     >
                         Export 
-                    </Button> */}
+                    </Button>
 
                 </div>
 
