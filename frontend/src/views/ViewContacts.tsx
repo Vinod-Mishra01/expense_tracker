@@ -119,10 +119,21 @@ const [selectedContacts, setSelectedContacts] = useState<string[]>([])
     
 
     const [currentPage, setCurrentPage] = useState(1)
+    const PAGE_SIZE_OPTIONS = [
+    { value: 10, label: '10' },
+    { value: 20, label: '20' },
+    { value: 50, label: '50' },
+    { value: 100, label: '100' },
+    { value: -1, label: 'All' },
+]
+
+const [pageSize, setPageSize] = useState(10)
+
+
+    
     const fileInputRef = useRef<HTMLInputElement>(null)
 
-    const pageSize = 10
-
+  
     useEffect(() => {
         fetchContacts()
     }, [])
@@ -564,12 +575,33 @@ const emails = (
         return data
     }, [contacts, search, favoriteFilter, sortBy])
 
-    const totalPages = Math.ceil(filteredContacts.length / pageSize)
+  const startIndex =
+    pageSize === -1
+        ? 0
+        : (currentPage - 1) * pageSize
 
-    const paginatedContacts = filteredContacts.slice(
-        (currentPage - 1) * pageSize,
-        currentPage * pageSize,
-    )
+const endIndex =
+    pageSize === -1
+        ? filteredContacts.length
+        : startIndex + pageSize
+
+const totalPages =
+    pageSize === -1
+        ? 1
+        : Math.ceil(filteredContacts.length / pageSize)
+
+const paginatedContacts =
+    pageSize === -1
+        ? filteredContacts
+        : filteredContacts.slice(startIndex, endIndex)
+
+
+
+
+
+
+
+
 
 
 
@@ -694,13 +726,13 @@ const emails = (
                         Reset
                     </Button>
 
-                    <Button
-                        variant="solid"
-                        icon={<TbDownload />}
-                        onClick={exportAllContacts}
-                    >
-                        Export 
-                    </Button>
+                     <Button
+                    variant="default"
+                    icon={<TbUpload />}
+                    onClick={handleImportVCF}
+                >
+                    Import VCF
+                </Button>
 
                 </div>
 
@@ -960,16 +992,37 @@ const emails = (
 
                 </div>
 
-                {totalPages > 1 && (
-                    <div className="flex justify-end mt-5">
-                        <Pagination
-                            currentPage={currentPage}
-                            total={filteredContacts.length}
-                            pageSize={pageSize}
-                            onChange={(page) => setCurrentPage(page)}
-                        />
-                    </div>
-                )}
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mt-5">
+
+    <div className="flex items-center gap-2">
+        <span className="text-sm text-gray-500">
+            Rows per page
+        </span>
+
+        <Select
+            size="sm"
+            className="w-24"
+            options={PAGE_SIZE_OPTIONS}
+            value={PAGE_SIZE_OPTIONS.find(
+                (item) => item.value === pageSize,
+            )}
+            onChange={(option) => {
+                setPageSize(option?.value ?? 10)
+                setCurrentPage(1)
+            }}
+        />
+    </div>
+
+    {pageSize !== -1 && totalPages > 1 && (
+        <Pagination
+            currentPage={currentPage}
+            total={filteredContacts.length}
+            pageSize={pageSize}
+            onChange={(page) => setCurrentPage(page)}
+        />
+    )}
+
+</div>
                                 {/* View Contact Dialog */}
 
                 <Dialog
