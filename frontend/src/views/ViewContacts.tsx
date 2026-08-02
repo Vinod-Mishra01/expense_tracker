@@ -13,6 +13,7 @@ import Select from '@/components/ui/Select'
 import Avatar from '@/components/ui/Avatar'
 import Dialog from '@/components/ui/Dialog'
 import toast from '@/components/ui/toast'
+import Checkbox from '@/components/ui/Checkbox'
 import { TbUpload } from 'react-icons/tb'
 import Notification from '@/components/ui/Notification'
 import Pagination from '@/components/ui/Pagination'
@@ -26,6 +27,7 @@ import {
     TbDownload,
     TbRefresh,
     TbStar,
+    TbChecklist,
     TbStarFilled,
 } from 'react-icons/tb'
 
@@ -99,6 +101,8 @@ const ViewContacts = () => {
 
     const [contacts, setContacts] = useState<ContactType[]>([])
     const [loading, setLoading] = useState(false)
+    // const [selectionMode, setSelectionMode] = useState(false)
+const [selectedContacts, setSelectedContacts] = useState<string[]>([])
 
     const [search, setSearch] = useState('')
     const [favoriteFilter, setFavoriteFilter] = useState('all')
@@ -112,6 +116,7 @@ const ViewContacts = () => {
     const [deleteOpen, setDeleteOpen] = useState(false)
 
     const [deleteId, setDeleteId] = useState('')
+    
 
     const [currentPage, setCurrentPage] = useState(1)
     const fileInputRef = useRef<HTMLInputElement>(null)
@@ -366,7 +371,56 @@ END:VCARD
     }
 
 
+const deleteSelectedContacts = async () => {
+    try {
+        await AxiosBase.delete(
+            `${API_URL}/delete-multiple`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                data: {
+                    ids: selectedContacts,
+                },
+            },
+        )
 
+        toast.push(
+            <Notification
+                type="success"
+                title="Success"
+            >
+                Contacts deleted successfully.
+            </Notification>,
+        )
+
+        setSelectedContacts([])
+
+        fetchContacts()
+    } catch (err) {
+        console.error(err)
+
+        toast.push(
+            <Notification
+                type="danger"
+                title="Error"
+            >
+                Failed to delete contacts.
+            </Notification>,
+        )
+    }
+}
+
+
+
+
+const favoriteSelectedContacts = async () => {
+    console.log(selectedContacts)
+}
+
+const exportSelectedContacts = () => {
+    console.log(selectedContacts)
+}
 
 const handleImportVCF = () => {
     fileInputRef.current?.click()
@@ -384,10 +438,15 @@ const handleVCFFileChange = async (
         formData.append('file', file)
 console.log('API URL =>', AxiosBase.defaults.baseURL)
 
-    await AxiosBase.post(
+ await AxiosBase.post(
     `${API_URL}/import-vcf`,
     formData,
- 
+    {
+        headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data',
+        },
+    },
 )
 
         toast.push(
@@ -523,42 +582,74 @@ const emails = (
             <div className="flex flex-col gap-5">
 
                 {/* Header */}
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+<div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
-                    <div>
-                        <h3 className="font-bold text-xl">
-                            View Contacts
-                        </h3>
+    <div>
+        <h3 className="font-bold text-xl">
+            {selectedContacts.length > 0
+                ? `${selectedContacts.length} Selected`
+                : 'View Contacts'}
+        </h3>
 
-                        <p className="text-gray-500 mt-1">
-                            Total Contacts : {filteredContacts.length}
-                        </p>
-                    </div>
+        <p className="text-gray-500 mt-1">
+            {selectedContacts.length > 0
+                ? 'Choose an action'
+                : `Total Contacts : ${filteredContacts.length}`}
+        </p>
+    </div>
 
-                    {/* <Button
-                        variant="solid"
-                        icon={<TbPlus />}
-                        onClick={() => navigate('/add-contact')}
-                    >
-                        Add Contact
-                    </Button> */}
+    <div className="flex gap-2 flex-wrap">
 
-<Button
-    variant="default"
-    icon={<TbUpload />}
-    onClick={handleImportVCF}
+        {selectedContacts.length > 0 ? (
+            <>
+            <Button
+    color="red"
+    icon={<TbTrash />}
+    disabled={selectedContacts.length === 0}
+    onClick={deleteSelectedContacts}
 >
-    Import VCF
+    Delete ({selectedContacts.length})
 </Button>
 
-<input
-    ref={fileInputRef}
-    type="file"
-    accept=".vcf"
-    className="hidden"
-    onChange={handleVCFFileChange}
-/>
-                </div>
+<Button
+    icon={<TbStar />}
+    disabled={selectedContacts.length === 0}
+    onClick={favoriteSelectedContacts}
+>
+    Favorite
+</Button>
+
+<Button
+    icon={<TbDownload />}
+    disabled={selectedContacts.length === 0}
+    onClick={exportSelectedContacts}
+>
+    Export ({selectedContacts.length})
+</Button>
+            </>
+        ) : (
+            <>
+                <Button
+                    variant="default"
+                    icon={<TbUpload />}
+                    onClick={handleImportVCF}
+                >
+                    Import VCF
+                </Button>
+            </>
+        )}
+
+    </div>
+
+    <input
+        ref={fileInputRef}
+        type="file"
+        accept=".vcf"
+        className="hidden"
+        onChange={handleVCFFileChange}
+    />
+
+</div>
 
                 {/* Filters */}
 
@@ -603,13 +694,13 @@ const emails = (
                         Reset
                     </Button>
 
-                    <Button
+                    {/* <Button
                         variant="solid"
                         icon={<TbDownload />}
                         onClick={exportAllContacts}
                     >
                         Export 
-                    </Button>
+                    </Button> */}
 
                 </div>
 
@@ -622,6 +713,25 @@ const emails = (
                         <thead className="bg-gray-100">
 
                             <tr>
+  
+        <th className="px-4 py-3">
+            <Checkbox
+                checked={
+                    paginatedContacts.length > 0 &&
+                    selectedContacts.length === paginatedContacts.length
+                }
+                onChange={(checked) => {
+                    if (checked) {
+                        setSelectedContacts(
+                            paginatedContacts.map((x) => x._id)
+                        )
+                    } else {
+                        setSelectedContacts([])
+                    }
+                }}
+            />
+        </th>
+
 
                                 <th className="px-4 py-3 text-left w-16">
                                     #
@@ -666,7 +776,7 @@ const emails = (
                                 <tr>
 
                                     <td
-                                        colSpan={8}
+                                    colSpan={8}
                                         className="text-center py-12"
                                     >
                                         Loading Contacts...
@@ -679,7 +789,7 @@ const emails = (
                                 <tr>
 
                                     <td
-                                        colSpan={8}
+                       colSpan={8}
                                         className="text-center py-12 text-gray-500"
                                     >
                                         No Contacts Found
@@ -716,6 +826,30 @@ const emails = (
                                             key={contact._id}
                                             className="border-t hover:bg-gray-50 transition"
                                         >
+
+
+
+    <td className="px-4 py-3">
+        <Checkbox
+            checked={selectedContacts.includes(contact._id)}
+            onChange={(checked) => {
+                if (checked) {
+                    setSelectedContacts((prev) => [
+                        ...prev,
+                        contact._id,
+                    ])
+                } else {
+                    setSelectedContacts((prev) =>
+                        prev.filter((id) => id !== contact._id)
+                    )
+                }
+            }}
+        />
+    </td>
+
+
+
+
                                             <td className="px-4 py-3">
                                                 {(currentPage - 1) * pageSize +
                                                     index +

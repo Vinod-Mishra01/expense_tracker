@@ -191,7 +191,34 @@ exports.toggleFavorite = async (req, res) => {
 }
 
 
+// ================= BULK DELETE =================
+exports.deleteMultipleContacts = async (req, res) => {
+    try {
+        const { ids } = req.body
 
+        if (!ids || !ids.length) {
+            return res.status(400).json({
+                success: false,
+                message: 'No contacts selected',
+            })
+        }
+
+        await Contact.deleteMany({
+            _id: { $in: ids },
+            userId: req.user.id,
+        })
+
+        res.status(200).json({
+            success: true,
+            message: 'Contacts deleted successfully',
+        })
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            message: err.message,
+        })
+    }
+}
 
 exports.importVCF = async (req, res) => {
     try {

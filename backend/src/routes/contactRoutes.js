@@ -12,6 +12,7 @@ const {
     deleteContact,
     toggleFavorite,
         importVCF,
+        deleteMultipleContacts,
 } = require('../controllers/contactController')
 
 const protect = require('../middleware/authMiddleware')
@@ -102,12 +103,19 @@ router.patch(
 router.post(
     '/import-vcf',
     (req, res, next) => {
-        console.log('✅ ROUTE HIT');
+  
         next();
     },
     protect,
     upload.single('file'),
     importVCF,
+)
+
+
+router.delete(
+    '/delete-multiple',
+    protect,
+    deleteMultipleContacts,
 )
 
 module.exports = router
