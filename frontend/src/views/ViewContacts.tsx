@@ -382,6 +382,7 @@ const handleVCFFileChange = async (
     try {
         const formData = new FormData()
         formData.append('file', file)
+console.log('API URL =>', AxiosBase.defaults.baseURL)
 
         await AxiosBase.post(
             'contact/import-vcf',
