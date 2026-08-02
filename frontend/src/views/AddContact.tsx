@@ -306,14 +306,14 @@ console.log('ACCESS TOKEN =>', localStorage.getItem('accessToken'))
         },
     )
 
-    toast.push(
-        <Notification type="success">
-            Contact added successfully
-        </Notification>,
-        {
-            placement: 'top-center',
-        },
-    )
+    // toast.push(
+    //     <Notification type="success">
+    //         Contact added successfully
+    //     </Notification>,
+    //     {
+    //         placement: 'top-center',
+    //     },
+    // )
 }
 
             toast.push(
@@ -330,18 +330,35 @@ console.log('ACCESS TOKEN =>', localStorage.getItem('accessToken'))
 }
 
             setLoading(false)
-        } catch (error) {
-            setLoading(false)
+     } catch (error: any) {
 
-            toast.push(
-                <Notification type="danger">
-                    Failed to add contact
-                </Notification>,
-                {
-                    placement: 'top-center',
-                },
-            )
-        }
+    setLoading(false)
+
+    if (
+        error.response?.status === 409 &&
+        error.response?.data?.duplicate
+    ) {
+        toast.push(
+            <Notification type="warning">
+                Contact already exists with the same phone number or email.
+            </Notification>,
+            {
+                placement: 'top-center',
+            },
+        )
+
+        return
+    }
+
+    toast.push(
+        <Notification type="danger">
+            Failed to save contact
+        </Notification>,
+        {
+            placement: 'top-center',
+        },
+    )
+}
     }
 useEffect(() => {
     if (isEdit) {
@@ -351,8 +368,8 @@ useEffect(() => {
 const fetchContact = async () => {
     try {
         const res = await AxiosBase.get(
-            `http://localhost:5000/api/contact/${id}`,
-            // `https://expense-backend-5myt.onrender.com/api/contact/${id}`,
+            // `http://localhost:5000/api/contact/${id}`,
+            `https://expense-backend-5myt.onrender.com/api/contact/${id}`,
             {
                 headers: {
                     Authorization: `Bearer ${token}`,
