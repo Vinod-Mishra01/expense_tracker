@@ -801,20 +801,20 @@ const paginatedContacts =
                         }}
                     />
 
-                    <Button
-                    className='Bg-red'
-                        icon={<TbRefresh />}
-                        onClick={resetFilters}
-                    >
-                        Reset
-                    </Button>
-
-               <Button
-    variant="solid"
-    icon={<TbDownload />}
-    onClick={exportAllContacts}
+                  <Button
+    className="bg-red-600 hover:bg-red-700 text-white border-red-600"
+    icon={<TbRefresh />}
+    onClick={resetFilters}
 >
-    Export All
+    Reset
+</Button>
+
+      <Button
+    className="bg-blue-600 hover:bg-blue-700 text-white border-blue-600"
+    icon={<TbUpload />}
+    onClick={handleImportVCF}
+>
+    Import VCF
 </Button>
 
                 </div>
