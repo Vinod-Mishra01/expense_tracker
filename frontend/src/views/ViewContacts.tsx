@@ -384,15 +384,11 @@ const handleVCFFileChange = async (
         formData.append('file', file)
 console.log('API URL =>', AxiosBase.defaults.baseURL)
 
-        await AxiosBase.post(
-            'contact/import-vcf',
-            formData,
-            {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            },
-        )
+    await AxiosBase.post(
+    `${API_URL}/import-vcf`,
+    formData,
+ 
+)
 
         toast.push(
             <Notification
