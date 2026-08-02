@@ -811,10 +811,10 @@ const paginatedContacts =
 
       <Button
     className="bg-blue-600 hover:bg-blue-700 text-white border-blue-600"
-    icon={<TbUpload />}
-    onClick={handleImportVCF}
+    icon={<TbDownload />}
+    onClick={exportAllContacts}
 >
-    Import VCF
+    Export All
 </Button>
 
                 </div>
