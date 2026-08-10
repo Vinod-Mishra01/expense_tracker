@@ -395,8 +395,8 @@ const fetchContact = async () => {
 
         if (contact.photo) {
             setPreview(
-                `http://localhost:5000/uploads/contacts/${contact.photo}`,
-                // `https://expense-backend-5myt.onrender.com/uploads/contacts/${contact.photo}`,
+                // `http://localhost:5000/uploads/contacts/${contact.photo}`,
+                `https://expense-backend-5myt.onrender.com/uploads/contacts/${contact.photo}`,
             )
         }
     } catch (err) {
