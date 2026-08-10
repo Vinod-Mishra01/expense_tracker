@@ -14,22 +14,25 @@ const {
     updateSalary,
 } = require('../controllers/salaryController')
 
-/* create folder if not exists */
-const uploadPath =
-    'uploads/salary'
+// ===============================
+// Upload Folder
+// ===============================
 
-if (
-    !fs.existsSync(
-        uploadPath,
-    )
-) {
-    fs.mkdirSync(
-        uploadPath,
-        {
-            recursive: true,
-        },
-    )
+const uploadPath = path.join(
+    __dirname,
+    '../../uploads/salary',
+)
+
+if (!fs.existsSync(uploadPath)) {
+    fs.mkdirSync(uploadPath, {
+        recursive: true,
+    })
 }
+
+console.log(
+    'SALARY UPLOAD PATH =>',
+    uploadPath,
+)
 
 /* multer storage */
 const storage =
